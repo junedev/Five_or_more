@@ -8,3 +8,10 @@ After every player move the computer places 3 more random colored bubbles to ran
 If the player manages to get 5 or more bubbles of the same color in a row/column/diagonal they are removed from the field and the player earns points depending on how many there were removed.
 After the player managed to get bubbles removed he can move a bubble again without the PC adding more bubbles beforehand.
 If the whole board is full the game ends and the score is displayed and the player is ranked (e.g. bronze, silver, gold)
+
+7 in row: 18
+6 in row: 12
+5 in row: 10
+8 in row: 30
+9 : 50
+10: 100

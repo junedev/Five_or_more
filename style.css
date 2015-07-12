@@ -17,6 +17,7 @@ aside {
 	margin-left:210px;
 	width:470px;
 	background-color: red;
+	display: inline-block;
 }
 
 .box{
@@ -24,15 +25,15 @@ aside {
 	height: 50px;
 	background-color: white;
 	border: 1px solid black;
-	margin: -4px 0 0 0;
+	float: left;
 }
 
 .bubble{
-	width:45px;
-	height: 45px;
+	width:40px;
+	height: 40px;
 	border-radius: 22.5px;
 }
 
 .selected {
-	background-color: black;
+	border: 2px solid black;
 }

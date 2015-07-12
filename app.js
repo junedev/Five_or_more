@@ -7,10 +7,17 @@ var Fom = Fom || {};
 
 Fom.setup = function(){
 	this.size = 9;
+	this.neighbourMap = [];
+	this.emptyArea = null;
+	this.checkedIds = null;
+
+	Fom.createGrid();
+	Fom.addThreeBubbles();
+}
+
+Fom.createGrid = function (){
 	var newBox;
 	var squareSeed = $("#grid")[0];
-
-	//Create grid
 	for(var i = 0; i<(this.size*this.size);i++){
 		newBox=document.createElement("button");
 		newBox.type="button";
@@ -21,15 +28,18 @@ Fom.setup = function(){
 		$(newBox).on("click", Fom.boxEvent);
 		newBox.disabled=true;
 	}
+	Fom.fillNeighbourMap();
+}
 
-	Fom.addThreeBubbles();
-
-	//this.boxes=$(".box");
-
-	// Test:
-	// for(var i=0;i<81;i++){
-	// 	Fom.placeBubble();
-	// }
+Fom.fillNeighbourMap = function(){
+	for(var i=0; i<(Fom.size*Fom.size);i++){
+		var neighbours=[];
+		if(i-Fom.size>=0){neighbours.push(i-Fom.size);}
+		if(i+Fom.size<(Fom.size*Fom.size)){neighbours.push(i+Fom.size);}
+		if(i%Fom.size!==0){neighbours.push(i-1);}
+		if(i%Fom.size!==Fom.size-1){neighbours.push(i+1);}
+		Fom.neighbourMap.push(neighbours);
+	}
 }
 
 Fom.isFull=function(){
@@ -67,6 +77,7 @@ Fom.colorPicker=function (){
 }
 
 Fom.bubbleEvent = function(){
+	event.stopPropagation();
 	$(".bubble").removeClass("selected");
 	$(event.currentTarget).addClass("selected");
 	$(".box").prop("disabled",true);
@@ -76,10 +87,49 @@ Fom.bubbleEvent = function(){
 
 Fom.boxEvent = function(){
 	console.log("box clicked");
+	if(Fom.validMove(event.currentTarget,$(".selected")[0])){
 	$(event.currentTarget).attr("state","taken");
 	$(".selected").parent().attr("state","empty");
 	$(".selected").detach().appendTo(event.currentTarget);
+	$(".selected").removeClass("selected");
 	Fom.addThreeBubbles();
-	$(".box").prop("disabled",true);
-	$(".box[state='empty']").prop("disabled",false);
+	$(".box").prop("disabled",true);}
+	else{
+		//show "you can't move there" on display
+	}
 }
+
+Fom.validMove = function(targetBox,bubble){
+	var targetId = parseInt(targetBox.id);
+	var bubbleId = parseInt($(bubble).parent()[0].id);
+	var result = false;
+	Fom.emptyArea = [];
+	Fom.checkedIds = [];
+
+	var checkForEmptyNeighbours = function(id){
+		if($.inArray(id,Fom.checkedIds)===-1){
+			Fom.checkedIds.push(id);
+			for(var i=0;i<Fom.neighbourMap[id].length;i++){
+				nId = Fom.neighbourMap[id][i];
+				if($("#"+nId).attr("state")==="empty"){
+					if($.inArray(nId,Fom.emptyArea)===-1){
+						Fom.emptyArea.push(nId);
+						checkForEmptyNeighbours(nId);
+					}
+				}
+			}
+		}
+	}
+	checkForEmptyNeighbours(targetId);
+	for(var i=0;i<Fom.neighbourMap[bubbleId].length;i++){
+		if($.inArray(Fom.neighbourMap[bubbleId][i],Fom.emptyArea)!==-1){
+			result=true;
+		}
+	}
+	if(!result){
+		console.log("unvalid move"); // FICME: print on screen
+	}
+
+	return result; 
+}
+
