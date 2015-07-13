@@ -15,6 +15,14 @@ Fom.setup = function(){
 	this.scoreMap = {};
 	this.rankMap = [[0, "LOOSER"],[200,"BRONZE"],[500, "SILVER"],[1000, "GOLD"],[2000,"LEGEN-DARY"]];
 	Fom.fillScoreMap();
+	Fom.newGame();
+	$("#reset").on("click",Fom.newGame);
+}
+
+Fom.newGame = function(){
+	Fom.score = 0;
+	Fom.neighbourMap = [];
+	Fom.neighbourMapInclDiagonal = [];
 	Fom.createGrid();
 	Fom.addThreeBubbles();
 }
@@ -30,6 +38,7 @@ Fom.fillScoreMap = function (){
 
 Fom.createGrid = function (){
 	var newBox;
+	$("#grid").empty();
 	var squareSeed = $("#grid")[0];
 	for(var i = 0; i<(this.size*this.size);i++){
 		newBox=document.createElement("button");
