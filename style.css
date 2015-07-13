@@ -3,37 +3,99 @@
 	padding: 0;
 }
 
+body, button {
+	font-family: 'Lora', serif;
+	font-size: 20px;
+	color: rgb(66, 90, 113);
+}
+
 body {
-	background-color: beige;
+	background-color: AliceBlue;
+}
+
+h1 {
+	margin: 10px 0;
+	font-weight: 100;
+}
+
+strong {
+	font-weight: bold;
+}
+
+#outerContainer {
+	width: 700px;
+	margin: 0 auto;
+}
+
+main {
+	width:450px;
+	background-color: AliceBlue;
+	display: inline-block;
 }
 
 aside {
+	position: relative;
+	height: 420px;
 	width: 200px;
-	background-color: grey;
-	float: left;
+	display: inline-block;
+	float:right;
+	margin:0 0 0 20px;
+	padding: 10px;
+	border: 1px solid rgb(109, 127, 144);
 }
 
 #grid {
-	margin-left:210px;
-	width:470px;
-	background-color: red;
+	width:450px;
 	display: inline-block;
 }
 
 .box{
 	width:50px;
 	height: 50px;
-	background-color: white;
-	border: 1px solid black;
+	background-color: rgb(172, 200, 224);
+	border: 1px solid rgb(109, 127, 144);
 	float: left;
+	margin: -1px -1px 0 0;
 }
 
 .bubble{
 	width:40px;
 	height: 40px;
 	border-radius: 22.5px;
+	outline: none;
 }
 
 .selected {
-	border: 2px solid black;
+	box-shadow: 3px 3px 10px rgba(66, 90, 113, 1);
+	border-radius:22.5px;
 }
+
+#preview button{
+	margin: 5px 5px 10px 5px;
+	pointer-events:none;
+}
+
+#preview {
+	margin-bottom: 10px;
+}
+
+p {
+	display: inline-block;
+}
+
+#scoreText {
+	margin-bottom: 15px;
+}
+
+#reset {
+	width: 150px;
+	position: absolute;
+	bottom:0;
+	margin: 15px 25px;
+}
+
+#text {
+	font-size: 14px;
+}
+
+

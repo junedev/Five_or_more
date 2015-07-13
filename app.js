@@ -102,17 +102,38 @@ Fom.isFull=function(){
 	}
 }
 
+Fom.fillPreview = function(){
+	if($("#preview").children().length===0){
+	for(var i=0;i<3;i++){
+		Fom.addBubble($("#preview")[0]);
+	}
+} 
+}
+
 Fom.addThreeBubbles=function(){
+
+	if($("#preview").children().length===0){
+		for(var i=0;i<3;i++){
+			Fom.addBubble($("#preview")[0]);
+		}
+	} 
+
 	for(var i=0;i<3;i++){
 		var $emptyBoxes = $(".box[state='empty']");
 		if($emptyBoxes.length>0){
 			var box = $emptyBoxes[Math.floor(Math.random()*$emptyBoxes.length)];
-			Fom.addBubble(box);
+			$($("#preview").children()[0]).detach().appendTo(box);
 			$(box).attr("state","taken");
 			Fom.checkRemoval(box);
 			Fom.isFull();
 		} 
 	}
+	var bubblesNeeded = 3-$("#preview").children().length;
+	if(bubblesNeeded>0){
+		for(var i=0;i<bubblesNeeded;i++){
+			Fom.addBubble($("#preview")[0]);
+		}
+	} 
 }
 
 Fom.addBubble = function(container){
@@ -125,7 +146,7 @@ Fom.addBubble = function(container){
 }
 
 Fom.colorPicker=function (){
-	var colors=["red", "blue", "pink", "green", "cyan", "yellow","orange"];
+	var colors=["rgb(221, 14, 48)", "rgb(9, 20, 179)", "rgb(133, 5, 104)", "rgb(4, 109, 16)", "rgb(18, 142, 145)", "rgb(251, 207, 1)","rgb(235, 124, 4)"];
 	return colors[Math.floor(Math.random()*colors.length)];
 }
 
@@ -223,7 +244,7 @@ Fom.boxEvent = function(){
 		if(bubbleCount!==0){
 		bubbleCount++; //add start bubble to connected bubbles count
 		Fom.score+=Fom.scoreMap[bubbleCount];
-		$("#score").html("Score: "+Fom.score);
+		$("#score").html(Fom.score);
 	}
 
 }
