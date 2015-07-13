@@ -11,8 +11,20 @@ Fom.setup = function(){
 	this.neighbourMapInclDiagonal = null;
 	this.emptyArea = null;
 	this.checkedIds = null;
+	this.score = 0;
+	this.scoreMap = {};
+	Fom.fillScoreMap();
 	Fom.createGrid();
 	Fom.addThreeBubbles();
+}
+
+Fom.fillScoreMap = function (){
+	var add = 2;
+	Fom.scoreMap[5]=10;
+	for(var i=6; i<=13; i++){
+		Fom.scoreMap[i]=add+Fom.scoreMap[i-1];
+		add+=4;
+	}
 }
 
 Fom.createGrid = function (){
@@ -152,15 +164,14 @@ Fom.checkRemoval = function (startBox){
 	var startId = parseInt(startBox.id);
 	var startN = Fom.neighbourMapInclDiagonal[startId];
 	var storage = [[],[],[],[]];
+	var bubbleCount = 0;
 	
 	var checkColor = function(index, id, neighbour){
 		if(!isNaN(neighbour)){
 			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
-				console.log(index+" "+id+" "+neighbour);
 				Fom.counter[index]++;
 				storage[index].push($("#"+neighbour));
 				checkColor(index,neighbour, neighbour+(neighbour-id));
-				console.log(Fom.counter);
 			} else {
 				return
 			}
@@ -172,9 +183,9 @@ Fom.checkRemoval = function (startBox){
 		checkColor(i,startId,startN[i*2+1]);
 	}
 
-
 	for(var i=0; i<Fom.counter.length;i++){
 		if(Fom.counter[i]>=5){
+			bubbleCount+=Fom.counter[i]-1;
 			$(startBox).empty();
 			$(startBox).attr("state","empty");
 			$(storage[i]).each(function(index,element){
@@ -183,33 +194,11 @@ Fom.checkRemoval = function (startBox){
 			});
 		}
 	}
+
+	if(bubbleCount!==0){
+		bubbleCount++; //add start bubble to connected bubbles count
+		Fom.score+=Fom.scoreMap[bubbleCount];
+		$("#score").html("Score: "+Fom.score);
+	}
+
 }
-
-	// var checkLeftN = function(startId,leftNId){
-	// 	if(startId%Fom.size!==0 && $("#"+leftNId).children().css("background-color")===color){
-	// 		Fom.rowCounter++;
-	// 		storage.push($("#"+leftNId)[0]);
-	// 		checkLeftN(leftNId,leftNId-1);
-	// 	} else {
-	// 		return
-	// 	}
-	// }
-	// checkLeftN(startId,startId-1);
-
-	// var checkRightN = function(startId,rightNId){
-	// 	if(startId%Fom.size!==Fom.size-1 && $("#"+rightNId).children().css("background-color")===color){
-	// 		Fom.rowCounter++;
-	// 		storage.push($("#"+rightNId)[0]);
-	// 		checkRightN(rightNId,rightNId+1);
-	// 	} else {
-	// 		return
-	// 	}
-	// }
-
-	// checkRightN(startId,startId+1);
-	// if(Fom.rowCounter>=5){
-	// 	$(storage).each(function(i,element){
-	// 		$(element).empty();
-	// 		$(element).attr("state","empty");
-	// 	});
-	// }
