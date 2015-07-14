@@ -15,7 +15,7 @@ body {
 }
 
 h1 {
-	margin: 10px 0;
+	margin: 40px 0;
 	font-weight: 100;
 }
 
@@ -24,9 +24,9 @@ strong, #score {
 }
 
 #outerContainer {
-	width: 720px;
+	width: 820px;
 	margin: 0 auto;
-	padding: 40px 40px 10px 40px;
+	padding: 100px 120px 70px 50px;
 	background-color: beige;
 	border: outset;
 	border-width: 5px;
