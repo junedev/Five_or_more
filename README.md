@@ -22,7 +22,7 @@ https://sensationnel-saucisson-1393.herokuapp.com/
 
 ---
 
-### Technics used
+### Techniques used
 
 Every box on the grid has a consecutive id and before the game starts arrays mapping the neighbours of each node are created.
 To check whether a move is possible a recursive algorithm is used to fill an array with all empty boxes connected to the target box.
