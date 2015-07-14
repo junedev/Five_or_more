@@ -2,32 +2,39 @@
 <html>
 <head>
 	<title>Five or more</title>
+
 	<link href='http://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="./animate.css">
 	<link rel="stylesheet" type="text/css" href="./style.css">
+
 	<script type="text/javascript" src="./jquery-2.1.4.js"></script>
 	<script type="text/javascript" src="./appOld.js"></script>
 </head>
 <body>
-<h1>Try to get <strong>Five or more</strong></h1>
-<div id="outerContainer">
-<main>
-<div id="grid"></div>
-<p id="message"></p>
-</main>
-<aside>
-<p id="previewText">Preview:</p>
-<div id="preview"></div>
-<div id="scoreText">Score: <p id="score">0</p></div>
-<p id="text">
-	Click on a bubble to pick it up. Click on a box to move it there but be aware 
-	your bubble can't move along diagonals and needs a free path to reach it's target.
-	 Try to get <strong>Five or more</strong> in a row, column or diagonal to make them vanish 
-	from the board. But be careful, every time you move a bubble and don't connect 
-	<strong> Five or more </strong> your enemy places three new bubbles on the board.
-</p>
-<button type="button" id="reset">New Game</button>
-</aside>
-</div>
+
+	<h1>Try to get <strong>Five or more</strong></h1>
+	<div id="outerContainer">
+
+		<main>
+			<div id="grid"></div>
+			<p id="message"></p>
+		</main>
+
+		<aside>
+			<p id="previewText">Preview:</p>
+			<div id="preview"></div>
+			<div id="scoreText">Score: <p id="score">0</p></div>
+			<p id="text">
+				Click on a bubble to pick it up. Click on a box to move it there but be aware 
+				your bubble can't move along diagonals and needs a free path to reach it's target.
+				Try to get <strong>Five or more</strong> in a row, column or diagonal to make them vanish 
+				from the board. But be careful, every time you move a bubble and don't connect 
+				<strong> Five or more </strong> your enemy places three new bubbles on the board.
+			</p>
+			<button type="button" id="reset">New Game</button>
+		</aside>
+
+	</div>
+
 </body>
 </html>
