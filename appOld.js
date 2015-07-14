@@ -169,67 +169,36 @@ Fom.boxEvent = function(){
 Fom.validMove = function(targetBox,bubble){
 	var targetId = parseInt(targetBox.id);
 	var bubbleId = parseInt($(bubble).parent()[0].id);
+	Fom.emptyArea = [targetId];
 	Fom.path = [];
-	Fom.path.push([targetId,0]);
-	Fom.finalPath = [];
-	var result = false;
+	Fom.checkedIds = [];
 
-	var remove=function(array,item){
-		return $.grep(array, function(value) {
-			return value != item;
-		})
-	}
-
-	var checkForNode = function(array, value){
-		var result = false;
-		for(var i=0; i<array.length; i++){
-			if(array[i][0]===value){result=true}
+	var checkIfPathFound = function(){
+		for(var i=0;i<Fom.neighbourMap[bubbleId].length;i++){
+			if($.inArray(Fom.neighbourMap[bubbleId][i],Fom.emptyArea)!==-1){
+				return true;
+			}
 		}
-	return result;
 	}
 
-	// var tracePath = function(startId){
-	// 	var n = Fom.neighbourMap[startId];
-	// 	var length=1000;
-	// 	var nId=null;
-	// 	for(var i=0;i<n.length;i++){
-	// 		for(var j=0;j<Fom.path.length;j++){
-	// 			if(n[i]===Fom.path[j][0] && Fom.path[j][1]<length){
-	// 				length=Fom.path[j][1];
-	// 				nId=n[i];
-	// 			}
-	// 		}
-	// 	}
-	// 	Fom.finalPath.push(nId);
-	// 	if(nId!==0){tracePath(nId)} 
-	// 		else{ console.log(Fom.finalPath);return};
-	// }
-
-	$("#"+bubbleId).attr("state","empty");
-	for(var i=0; i<Fom.path.length;i++){
-		var neighbours = Fom.neighbourMap[Fom.path[i][0]];
-		var pathCounter= Fom.path[i][1]+1;
-		for(var j=0; j<neighbours.length; j++) {
-			if($("#"+neighbours[j]).attr("state")==="taken"){
-				neighbours=remove(neighbours,neighbours[j]);
-			} else {
-				for(var k=0; k<Fom.path.length; k++){
-					if(Fom.path[k][0]===neighbours[j] && Fom.path[k][1]>=pathCounter){
-						neighbours=remove(neighbours,neighbours[j]);
+	var checkForEmptyNeighbours = function(id){
+		if($.inArray(id,Fom.checkedIds)===-1){
+			Fom.checkedIds.push(id);
+			for(var i=0;i<Fom.neighbourMap[id].length;i++){
+				nId = Fom.neighbourMap[id][i];
+				if($("#"+nId).attr("state")==="empty"){
+					if($.inArray(nId,Fom.emptyArea)===-1){
+						Fom.emptyArea.push(nId);
+						checkForEmptyNeighbours(nId);
 					}
 				}
 			}
 		}
-		for(var k=0;k<neighbours.length;k++){
-			Fom.path.push([neighbours[k],pathCounter]);
-		}
-		if(checkForNode(Fom.path,bubbleId)){ result = true; break;}
 	}
 
-	$("#"+bubbleId).attr("state","taken");
-	return result;
+	checkForEmptyNeighbours(targetId);
+	return checkIfPathFound()||false;
 }
-
 
 Fom.checkRemoval = function (startBox){
 	Fom.color = $(startBox).children().css("background-color");

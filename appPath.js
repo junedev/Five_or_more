@@ -169,106 +169,86 @@ Fom.boxEvent = function(){
 Fom.validMove = function(targetBox,bubble){
 	var targetId = parseInt(targetBox.id);
 	var bubbleId = parseInt($(bubble).parent()[0].id);
-	Fom.path = [];
-	Fom.path.push([targetId,0]);
-	Fom.finalPath = [];
-	var result = false;
+	
+	Fom.checkedIds = [];
 
-	var remove=function(array,item){
-		return $.grep(array, function(value) {
-			return value != item;
-		})
+	var path = [];
+	var pathContainer = [];
+	var over = false;
+
+	function checkForEmptyNeighbours(id, p){
+		// if(p.length>20){ 
+		// 	over = true;
+		// }
+		
+			var path2 = p.concat(id);
+
+			Fom.neighbourMap[id].forEach(function(next){
+				if(p.indexOf(next) === -1){
+					if($("#"+next).attr("state")==="empty"){
+						console.log(targetId);
+						if (next === targetId) {
+							pathContainer.push(path2);
+							over = true;
+							return true;
+	          	//console.log(pathContainer);
+	          } else {
+	          	if(!over){	          	
+	          	checkForEmptyNeighbours(next, path2);
+	          	console.log("running recursive");
+	          }
+	          }
+	        }
+	      }
+	    })
 	}
 
-	var checkForNode = function(array, value){
-		var result = false;
-		for(var i=0; i<array.length; i++){
-			if(array[i][0]===value){result=true}
-		}
-	return result;
+	  checkForEmptyNeighbours(bubbleId,path, false);
+	  var shortest = pathContainer.reduce(function(p,c) {return p.length>c.length?c:p;},{length:Infinity});
+	  for(var i=0; i<shortest.length; i++){
+	  	$("#"+shortest[i]).css("background-color","grey");
+	  }
+	  return over;
 	}
 
-	// var tracePath = function(startId){
-	// 	var n = Fom.neighbourMap[startId];
-	// 	var length=1000;
-	// 	var nId=null;
-	// 	for(var i=0;i<n.length;i++){
-	// 		for(var j=0;j<Fom.path.length;j++){
-	// 			if(n[i]===Fom.path[j][0] && Fom.path[j][1]<length){
-	// 				length=Fom.path[j][1];
-	// 				nId=n[i];
-	// 			}
-	// 		}
-	// 	}
-	// 	Fom.finalPath.push(nId);
-	// 	if(nId!==0){tracePath(nId)} 
-	// 		else{ console.log(Fom.finalPath);return};
-	// }
+	Fom.checkRemoval = function (startBox){
+		Fom.color = $(startBox).children().css("background-color");
+		Fom.counter = [1,1,1,1];
+		var startId = parseInt(startBox.id);
+		var startN = Fom.neighbourMapInclDiagonal[startId];
+		var storage = [[],[],[],[]];
+		var bubbleCount = 0;
 
-	$("#"+bubbleId).attr("state","empty");
-	for(var i=0; i<Fom.path.length;i++){
-		var neighbours = Fom.neighbourMap[Fom.path[i][0]];
-		var pathCounter= Fom.path[i][1]+1;
-		for(var j=0; j<neighbours.length; j++) {
-			if($("#"+neighbours[j]).attr("state")==="taken"){
-				neighbours=remove(neighbours,neighbours[j]);
-			} else {
-				for(var k=0; k<Fom.path.length; k++){
-					if(Fom.path[k][0]===neighbours[j] && Fom.path[k][1]>=pathCounter){
-						neighbours=remove(neighbours,neighbours[j]);
-					}
+		var checkColor = function(index, id, neighbour){
+			if(!isNaN(neighbour)){
+				if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
+					Fom.counter[index]++;
+					storage[index].push($("#"+neighbour));
+					checkColor(index,neighbour, neighbour+(neighbour-id));
+				} else {
+					return
 				}
 			}
 		}
-		for(var k=0;k<neighbours.length;k++){
-			Fom.path.push([neighbours[k],pathCounter]);
+
+		for(var i=0; i<Fom.counter.length;i++){
+			checkColor(i,startId,startN[i*2]);
+			checkColor(i,startId,startN[i*2+1]);
 		}
-		if(checkForNode(Fom.path,bubbleId)){ result = true; break;}
-	}
 
-	$("#"+bubbleId).attr("state","taken");
-	return result;
-}
-
-
-Fom.checkRemoval = function (startBox){
-	Fom.color = $(startBox).children().css("background-color");
-	Fom.counter = [1,1,1,1];
-	var startId = parseInt(startBox.id);
-	var startN = Fom.neighbourMapInclDiagonal[startId];
-	var storage = [[],[],[],[]];
-	var bubbleCount = 0;
-
-	var checkColor = function(index, id, neighbour){
-		if(!isNaN(neighbour)){
-			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
-				Fom.counter[index]++;
-				storage[index].push($("#"+neighbour));
-				checkColor(index,neighbour, neighbour+(neighbour-id));
-			} else {
-				return
+		for(var i=0; i<Fom.counter.length;i++){
+			if(Fom.counter[i]>=5){
+				bubbleCount+=Fom.counter[i]-1;
+				$(startBox).empty();
+				$(startBox).attr("state","empty");
+				$(storage[i]).each(function(index,element){
+					$(element).empty();
+					$(element).attr("state","empty");
+				});
 			}
 		}
-	}
 
-	for(var i=0; i<Fom.counter.length;i++){
-		checkColor(i,startId,startN[i*2]);
-		checkColor(i,startId,startN[i*2+1]);
-	}
-
-	for(var i=0; i<Fom.counter.length;i++){
-		if(Fom.counter[i]>=5){
-			bubbleCount+=Fom.counter[i]-1;
-			$(startBox).empty();
-			$(startBox).attr("state","empty");
-			$(storage[i]).each(function(index,element){
-				$(element).empty();
-				$(element).attr("state","empty");
-			});
-		}
-	}
-
-	if(bubbleCount!==0){
+		if(bubbleCount!==0){
 		bubbleCount++; //add start bubble to connected bubbles count
 		Fom.score+=Fom.scoreMap[bubbleCount];
 		$("#score").html(Fom.score);
