@@ -9,12 +9,13 @@ If the player manages to get 5 or more bubbles of the same color in a row/column
 After the player managed to get bubbles removed he can move a bubble again without the PC adding more bubbles beforehand.
 If the whole board is full the game ends and the score is displayed and the player is ranked (e.g. bronze, silver, gold)
 
+
 Scores: 
 
-5 in row: 10
-6 in row: 12
-7 in row: 18
-8 in row: 28
+5 : 10
+6 : 12
+7 : 18
+8 : 28
 9 : 42
 10: 60
 11: 82
