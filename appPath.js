@@ -170,85 +170,78 @@ Fom.validMove = function(targetBox,bubble){
 	var targetId = parseInt(targetBox.id);
 	var bubbleId = parseInt($(bubble).parent()[0].id);
 	
-	Fom.checkedIds = [];
-
 	var path = [];
+	var counter = 0;
 	var pathContainer = [];
 	var over = false;
 
 	function checkForEmptyNeighbours(id, p){
-		// if(p.length>20){ 
-		// 	over = true;
-		// }
-		
-			var path2 = p.concat(id);
-
-			Fom.neighbourMap[id].forEach(function(next){
-				if(p.indexOf(next) === -1){
-					if($("#"+next).attr("state")==="empty"){
-						console.log(targetId);
-						if (next === targetId) {
-							pathContainer.push(path2);
-							over = true;
-							return true;
-	          	//console.log(pathContainer);
-	          } else {
-	          	if(!over){	          	
-	          	checkForEmptyNeighbours(next, path2);
-	          	console.log("running recursive");
-	          }
-	          }
-	        }
-	      }
-	    })
-	}
-
-	  checkForEmptyNeighbours(bubbleId,path, false);
-	  var shortest = pathContainer.reduce(function(p,c) {return p.length>c.length?c:p;},{length:Infinity});
-	  for(var i=0; i<shortest.length; i++){
-	  	$("#"+shortest[i]).css("background-color","grey");
-	  }
-	  return over;
-	}
-
-	Fom.checkRemoval = function (startBox){
-		Fom.color = $(startBox).children().css("background-color");
-		Fom.counter = [1,1,1,1];
-		var startId = parseInt(startBox.id);
-		var startN = Fom.neighbourMapInclDiagonal[startId];
-		var storage = [[],[],[],[]];
-		var bubbleCount = 0;
-
-		var checkColor = function(index, id, neighbour){
-			if(!isNaN(neighbour)){
-				if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
-					Fom.counter[index]++;
-					storage[index].push($("#"+neighbour));
-					checkColor(index,neighbour, neighbour+(neighbour-id));
-				} else {
-					return
+		var path2 = p.concat(id);
+		counter++;
+		Fom.neighbourMap[id].forEach(function(next){
+			if(p.indexOf(next) === -1){
+				if($("#"+next).attr("state")==="empty"){
+					if (next === targetId) {
+						pathContainer.push(path2);
+						over = true;
+						return true;
+					} else {
+						if(!over){ 	
+							checkForEmptyNeighbours(next, path2);
+							console.log("running recursive");
+						} else {return}
+					}
 				}
 			}
-		}
+		})
+	}
 
-		for(var i=0; i<Fom.counter.length;i++){
-			checkColor(i,startId,startN[i*2]);
-			checkColor(i,startId,startN[i*2+1]);
-		}
+	checkForEmptyNeighbours(bubbleId,path);
+	var shortest = pathContainer.reduce(function(p,c) {return p.length>c.length?c:p;},{length:Infinity});
+	for(var i=0; i<shortest.length; i++){
+		$("#"+shortest[i]).css("background-color","grey");
+	}
+	return over;
+}
 
-		for(var i=0; i<Fom.counter.length;i++){
-			if(Fom.counter[i]>=5){
-				bubbleCount+=Fom.counter[i]-1;
-				$(startBox).empty();
-				$(startBox).attr("state","empty");
-				$(storage[i]).each(function(index,element){
-					$(element).empty();
-					$(element).attr("state","empty");
-				});
+Fom.checkRemoval = function (startBox){
+	Fom.color = $(startBox).children().css("background-color");
+	Fom.counter = [1,1,1,1];
+	var startId = parseInt(startBox.id);
+	var startN = Fom.neighbourMapInclDiagonal[startId];
+	var storage = [[],[],[],[]];
+	var bubbleCount = 0;
+
+	var checkColor = function(index, id, neighbour){
+		if(!isNaN(neighbour)){
+			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
+				Fom.counter[index]++;
+				storage[index].push($("#"+neighbour));
+				checkColor(index,neighbour, neighbour+(neighbour-id));
+			} else {
+				return
 			}
 		}
+	}
 
-		if(bubbleCount!==0){
+	for(var i=0; i<Fom.counter.length;i++){
+		checkColor(i,startId,startN[i*2]);
+		checkColor(i,startId,startN[i*2+1]);
+	}
+
+	for(var i=0; i<Fom.counter.length;i++){
+		if(Fom.counter[i]>=5){
+			bubbleCount+=Fom.counter[i]-1;
+			$(startBox).empty();
+			$(startBox).attr("state","empty");
+			$(storage[i]).each(function(index,element){
+				$(element).empty();
+				$(element).attr("state","empty");
+			});
+		}
+	}
+
+	if(bubbleCount!==0){
 		bubbleCount++; //add start bubble to connected bubbles count
 		Fom.score+=Fom.scoreMap[bubbleCount];
 		$("#score").html(Fom.score);

@@ -131,14 +131,14 @@ Fom.addThreeBubbles=function(){
 Fom.addBubble = function(container){
 	var $newBubble=$(document.createElement("button"));
 	$newBubble.prop("type","button");
-	$newBubble.css("background-color",Fom.colorPicker());
+	$newBubble.css("background","radial-gradient(circle at 10px 15px, "+Fom.colorPicker()+", rgba(0,0,0,0.8))");
 	$newBubble.addClass("bubble");
 	$newBubble.on("click",Fom.bubbleEvent);
 	container.appendChild($newBubble[0]);
 }
 
 Fom.colorPicker=function (){
-	var colors=["rgb(221, 14, 48)", "rgb(9, 20, 179)", "rgb(133, 5, 104)", "rgb(4, 109, 16)", "rgb(18, 142, 145)", "rgb(251, 207, 1)","rgb(235, 124, 4)"];
+	var colors=["rgb(221, 14, 48)", "rgb(89, 130, 218)", "rgb(133, 5, 104)", "rgb(4, 109, 16)", "rgb(18, 142, 145)", "rgb(251, 207, 1)","rgb(235, 124, 4)"];
 	return colors[Math.floor(Math.random()*colors.length)];
 }
 
@@ -146,6 +146,7 @@ Fom.bubbleEvent = function(){
 	event.stopPropagation();
 	$(".bubble").removeClass("selected");
 	$(event.currentTarget).addClass("selected");
+	$(event.currentTarget).addClass("animated pulse");
 	$(".box").prop("disabled",true);
 	$(".box[state='empty']").prop("disabled",false);
 }
@@ -156,6 +157,7 @@ Fom.boxEvent = function(){
 		$(event.currentTarget).attr("state","taken");
 		$(".selected").parent().attr("state","empty");
 		$(".selected").detach().appendTo(event.currentTarget);
+		$(".selected").removeClass("animated pulse");
 		$(".selected").removeClass("selected");
 		Fom.checkRemoval(event.currentTarget);
 		Fom.addThreeBubbles();
@@ -201,7 +203,7 @@ Fom.validMove = function(targetBox,bubble){
 }
 
 Fom.checkRemoval = function (startBox){
-	Fom.color = $(startBox).children().css("background-color");
+	Fom.color = $(startBox).children().css("background");
 	Fom.counter = [1,1,1,1];
 	var startId = parseInt(startBox.id);
 	var startN = Fom.neighbourMapInclDiagonal[startId];
@@ -210,7 +212,7 @@ Fom.checkRemoval = function (startBox){
 
 	var checkColor = function(index, id, neighbour){
 		if(!isNaN(neighbour)){
-			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
+			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background")===Fom.color){
 				Fom.counter[index]++;
 				storage[index].push($("#"+neighbour));
 				checkColor(index,neighbour, neighbour+(neighbour-id));
