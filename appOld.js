@@ -147,7 +147,7 @@ Fom.colorPicker=function (){
 
 // clicking on a bubble adds/resets the animation and enables all empty boxes to be clickable
 Fom.bubbleEvent = function(){
-	event.supPropagation();
+	event.stopPropagation();
 	$(".bubble").removeClass("selected");
 	$(".bubble").removeClass("animated infinite pulse");
 	$(event.currentTarget).addClass("selected");
