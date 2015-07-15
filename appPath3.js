@@ -23,6 +23,7 @@ Fom.setup = function(){
 
 Fom.newGame = function(){
 	Fom.score = 0;
+	$("#score").html(Fom.score);
 	Fom.createGrid();
 	Fom.fillPreview();
 	Fom.addThreeBubbles();
