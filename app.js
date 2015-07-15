@@ -23,6 +23,7 @@ Fom.setup = function(){
 
 Fom.newGame = function(){
 	Fom.score = 0;
+	$("#score").html(Fom.score);
 	Fom.createGrid();
 	Fom.fillPreview();
 	Fom.addThreeBubbles();
@@ -147,6 +148,7 @@ Fom.colorPicker=function (){
 
 // clicking on a bubble adds/resets the animation and enables all empty boxes to be clickable
 Fom.bubbleEvent = function(){
+	$(".box").css("background-image","url('./tile.jpg')");
 	event.stopPropagation();
 	$(".bubble").removeClass("selected");
 	$(".bubble").removeClass("animated infinite pulse");
@@ -160,6 +162,9 @@ Fom.bubbleEvent = function(){
 Fom.boxEvent = function(){
 	$("#message").html("");
 	if(Fom.validMove(event.currentTarget,$(".selected")[0])){
+		Fom.finalPath.forEach(function(element){
+			$("#"+element).css("background-image","url('./tile_marked.jpg')");
+		})
 		$(".selected").detach().appendTo(event.currentTarget);
 		$(".selected").removeClass("animated infinite pulse");
 		$(".selected").removeClass("selected");
@@ -171,48 +176,65 @@ Fom.boxEvent = function(){
 	}
 }
 
-// Helper function to check whether a box is empty
-Fom.isEmpty = function(box){
-	var h = $.inArray(box,$("#grid").find(".box:empty"));
-	if(h === -1){
-		return false
-	} else {return true}
-}
-
 // Check whether the bubble can reach the target by moving over empty boxes only
 Fom.validMove = function(targetBox,bubble){
 	var targetId = parseInt(targetBox.id);
 	var bubbleId = parseInt($(bubble).parent()[0].id);
-	Fom.emptyArea = [targetId];
-	Fom.checkedIds = [];
+	var searching = true;
+	var pathPossible = false;
+	Fom.path = [[bubbleId,0]];
+	Fom.finalPath=[];
 
-	Fom.checkForEmptyNeighbours(targetId);
-	return Fom.movementPossible(bubbleId)||false;
-}
+	for(var i=0; i<Fom.path.length;i++){
+		var neighbours = Fom.neighbourMap[Fom.path[i][0]];
+		var addMe = [];
+		var pathCounter= Fom.path[i][1]+1;
 
-// Fill up emptyArea with all empty boxes connected to current target
-Fom.checkForEmptyNeighbours = function(id){
-	if($.inArray(id,Fom.checkedIds)===-1){
-		Fom.checkedIds.push(id);
-		for(var i=0;i<Fom.neighbourMap[id].length;i++){
-			nextId = Fom.neighbourMap[id][i];
-			if(Fom.isEmpty($("#"+nextId)[0])){
-				if($.inArray(nextId,Fom.emptyArea)===-1){
-					Fom.emptyArea.push(nextId);
-					Fom.checkForEmptyNeighbours(nextId);
+		for(var j=0; j<neighbours.length; j++) {
+			if($("#"+neighbours[j]).children().length<=0){
+				addMe.push(neighbours[j]);
+				for(var k=0; k<Fom.path.length; k++){
+					if(Fom.path[k][0]===addMe[addMe.length-1] && Fom.path[k][1]<=pathCounter){
+						addMe.pop(); break;
+					}
 				}
 			}
 		}
-	}
-}
 
-// Check whether a neighbour of the current bubble is an element of emptyArea
-Fom.movementPossible = function(bubbleId){
-	for(var i=0;i<Fom.neighbourMap[bubbleId].length;i++){
-		if($.inArray(Fom.neighbourMap[bubbleId][i],Fom.emptyArea)!==-1){
-			return true;
+		for(var m=0;m<addMe.length;m++){
+			if(addMe[m]===targetId){ 
+				searching = false; 
+				pathPossible = true; 
+				Fom.tracePath(targetId, Fom.path); 
+				Fom.finalPath.unshift(targetId);
+				Fom.finalPath.push(bubbleId);
+				return true;
+			} else {
+				Fom.path.push([addMe[m],pathCounter]);
+			}
 		}
 	}
+
+	return pathPossible; 
+}
+
+Fom.tracePath = function(start, pathArray){
+	var n = Fom.neighbourMap[start];
+	var length=1000;
+	var nId=null;
+	for(var i=0;i<n.length;i++){
+
+		for(var j=0;j<pathArray.length;j++){
+			if(n[i]===pathArray[j][0] && pathArray[j][1]<length){
+				length=pathArray[j][1];
+				nId=n[i];
+			}
+		}
+	console.log(nId + " " +length);
+
+	}
+	if(length!==0){ Fom.finalPath.push(nId);  Fom.tracePath(nId, pathArray)} 
+	else{return};
 }
 
 // Check whether there are 5 or more connected bubbles and if yes, remove them
