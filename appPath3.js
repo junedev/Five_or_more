@@ -147,6 +147,7 @@ Fom.colorPicker=function (){
 
 // clicking on a bubble adds/resets the animation and enables all empty boxes to be clickable
 Fom.bubbleEvent = function(){
+	$(".box").css("background-image","url('./tile.jpg')");
 	event.stopPropagation();
 	$(".bubble").removeClass("selected");
 	$(".bubble").removeClass("animated infinite pulse");
@@ -160,6 +161,9 @@ Fom.bubbleEvent = function(){
 Fom.boxEvent = function(){
 	$("#message").html("");
 	if(Fom.validMove(event.currentTarget,$(".selected")[0])){
+		Fom.finalPath.forEach(function(element){
+			$("#"+element).css("background-image","url('./tile_marked.jpg')");
+		})
 		$(".selected").detach().appendTo(event.currentTarget);
 		$(".selected").removeClass("animated infinite pulse");
 		$(".selected").removeClass("selected");
@@ -201,6 +205,8 @@ Fom.validMove = function(targetBox,bubble){
 				searching = false; 
 				pathPossible = true; 
 				Fom.tracePath(targetId, Fom.path); 
+				Fom.finalPath.unshift(targetId);
+				Fom.finalPath.push(bubbleId);
 				return true;
 			} else {
 				Fom.path.push([addMe[m],pathCounter]);
@@ -227,7 +233,7 @@ Fom.tracePath = function(start, pathArray){
 
 	}
 	if(length!==0){ Fom.finalPath.push(nId);  Fom.tracePath(nId, pathArray)} 
-	else{ console.log(Fom.finalPath);return};
+	else{return};
 }
 
 // Check whether there are 5 or more connected bubbles and if yes, remove them
