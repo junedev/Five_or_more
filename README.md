@@ -29,3 +29,5 @@ To check whether a move is possible a recursive algorithm is used to fill an arr
 Also to check whether there are 5 or more bubbles connected an recursive algorithm checks along each possible direction for bubbles of the same color. Please see comments inside the code for more details.
 
 Animate.css for used for having a pulse effect for the selected bubble. FadeOut is used before removing bubbles from the board.
+
+See app.Path3.js for version of the code with pathfinding algorithm included.
