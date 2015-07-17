@@ -9,11 +9,10 @@ Fom.setup = function(){
 	this.size = 9;
 	this.neighbourMap = []; //only up, down, left, right neighbours
 	this.neighbourMapInclDiagonal = [];
-	this.emptyArea = null;
-	this.checkedIds = null;
 	this.score = 0;
 	this.scoreMap = {};
 	this.rankMap = [[0, "LOOSER"],[200,"BRONZE"],[500, "SILVER"],[1000, "GOLD"],[2000,"LEGEN-DARY"]];
+	this.animationArray = [];
 	this.fillScoreMap();
 	this.fillNeighbourMap();
 	this.fillNeighbourMapInclDiagonal();
@@ -124,9 +123,14 @@ Fom.addThreeBubbles=function(){
 		var $emptyBoxes = $("#grid").find(".box:empty");
 		if($emptyBoxes.length>0){
 			var box = $emptyBoxes[Math.floor(Math.random()*$emptyBoxes.length)];
-			$("#preview .bubble:first-child").detach().appendTo(box);
+			var $nextBubble = $("#preview .bubble:first-child");
+			$nextBubble.css('position','absolute');
+			$nextBubble.css('top', 0);
+			$nextBubble.css('left', '3px');
+			$nextBubble.css('z-index', 2000);
+			$nextBubble.detach().appendTo(box);
 			Fom.checkRemoval(box);
-			Fom.isFull();
+			setTimeout(Fom.isFull,510);
 		} 
 	}
 	Fom.fillPreview();
@@ -135,7 +139,7 @@ Fom.addThreeBubbles=function(){
 Fom.addBubble = function(parent){
 	var $newBubble=$(document.createElement("button"));
 	$newBubble.prop("type","button");
-	$newBubble.css("background","radial-gradient(circle at 10px 15px, "+Fom.colorPicker()+", rgba(0,0,0,0.8))");
+	$newBubble.css("background","radial-gradient(circle at 10px 15px, "+Fom.colorPicker()+", rgba(0,0,0,1))");
 	$newBubble.addClass("bubble");
 	$newBubble.on("click",Fom.bubbleEvent);
 	parent.appendChild($newBubble[0]);
@@ -148,7 +152,6 @@ Fom.colorPicker=function (){
 
 // clicking on a bubble adds/resets the animation and enables all empty boxes to be clickable
 Fom.bubbleEvent = function(){
-	$(".box").css("background-image","url('./tile.jpg')");
 	event.stopPropagation();
 	$(".bubble").removeClass("selected");
 	$(".bubble").removeClass("animated infinite pulse");
@@ -160,16 +163,19 @@ Fom.bubbleEvent = function(){
 
 // clicking on a box moves the currently selected bubble there if possible
 Fom.boxEvent = function(){
+	Fom.target = event.currentTarget;
 	$("#message").html("");
 	if(Fom.validMove(event.currentTarget,$(".selected")[0])){
-		Fom.finalPath.forEach(function(element){
-			$("#"+element).css("background-image","url('./tile_marked.jpg')");
-		})
-		$(".selected").detach().appendTo(event.currentTarget);
-		$(".selected").removeClass("animated infinite pulse");
-		$(".selected").removeClass("selected");
-		if(!Fom.checkRemoval(event.currentTarget)){Fom.addThreeBubbles();}
-		$(".box").prop("disabled",true);
+		Fom.createAnimation(Fom.finalPath);
+		setTimeout(function(){
+			$(".selected").css("top",0);
+			$(".selected").css("left","3px");
+			$(".selected").removeClass("animated infinite pulse");
+			$(".selected").detach().appendTo(Fom.target);
+			$(".selected").removeClass("selected");
+			if(!Fom.checkRemoval(Fom.target)){Fom.addThreeBubbles();}
+			$(".box").prop("disabled",true);
+		},(Fom.finalPath.length-1)*110);
 	}
 	else{
 		$("#message").html("You can't move there.")
@@ -182,58 +188,57 @@ Fom.validMove = function(targetBox,bubble){
 	var bubbleId = parseInt($(bubble).parent()[0].id);
 	var searching = true;
 	var pathPossible = false;
-	Fom.path = [[bubbleId,0]];
+	Fom.distanceArray = [[bubbleId,0]];
 	Fom.finalPath=[];
 
-	for(var i=0; i<Fom.path.length;i++){
-		var neighbours = Fom.neighbourMap[Fom.path[i][0]];
-		var addMe = [];
-		var pathCounter= Fom.path[i][1]+1;
+	for(var i=0; i<Fom.distanceArray.length;i++){
+		var neighbours = Fom.neighbourMap[Fom.distanceArray[i][0]];
+		var addToDistanceArray = [];
+		var pathCounter= Fom.distanceArray[i][1]+1;
 
 		for(var j=0; j<neighbours.length; j++) {
 			if($("#"+neighbours[j]).children().length<=0){
-				addMe.push(neighbours[j]);
-				for(var k=0; k<Fom.path.length; k++){
-					if(Fom.path[k][0]===addMe[addMe.length-1] && Fom.path[k][1]<=pathCounter){
-						addMe.pop(); break;
+				addToDistanceArray.push(neighbours[j]);
+				for(var k=0; k<Fom.distanceArray.length; k++){
+					if(Fom.distanceArray[k][0]===addToDistanceArray[addToDistanceArray.length-1] && Fom.distanceArray[k][1]<=pathCounter){
+						addToDistanceArray.pop(); break;
 					}
 				}
 			}
 		}
 
-		for(var m=0;m<addMe.length;m++){
-			if(addMe[m]===targetId){ 
+		for(var m=0;m<addToDistanceArray.length;m++){
+			if(addToDistanceArray[m]===targetId){ 
 				searching = false; 
 				pathPossible = true; 
-				Fom.tracePath(targetId, Fom.path); 
+				Fom.tracePath(targetId, Fom.distanceArray); 
 				Fom.finalPath.unshift(targetId);
 				Fom.finalPath.push(bubbleId);
 				return true;
 			} else {
-				Fom.path.push([addMe[m],pathCounter]);
+				Fom.distanceArray.push([addToDistanceArray[m],pathCounter]);
 			}
 		}
 	}
-
 	return pathPossible; 
 }
 
-Fom.tracePath = function(start, pathArray){
-	var n = Fom.neighbourMap[start];
+// Start from targetId and go through distanceArray and find the best path by 
+// always going to the one of the neighbours that is closest to the bubble
+// stop if you reach the element with length 0 (start bubble)
+Fom.tracePath = function(start, distanceArray){
+	var neighbours = Fom.neighbourMap[start];
 	var length=1000;
-	var nId=null;
-	for(var i=0;i<n.length;i++){
-
-		for(var j=0;j<pathArray.length;j++){
-			if(n[i]===pathArray[j][0] && pathArray[j][1]<length){
-				length=pathArray[j][1];
-				nId=n[i];
+	var closestNeighbour=null;
+	for(var i=0;i<neighbours.length;i++){
+		for(var j=0;j<distanceArray.length;j++){
+			if(neighbours[i]===distanceArray[j][0] && distanceArray[j][1]<length){
+				length=distanceArray[j][1];
+				closestNeighbour=neighbours[i];
 			}
 		}
-	console.log(nId + " " +length);
-
 	}
-	if(length!==0){ Fom.finalPath.push(nId);  Fom.tracePath(nId, pathArray)} 
+	if(length!==0){ Fom.finalPath.push(closestNeighbour);  Fom.tracePath(closestNeighbour, distanceArray)} 
 	else{return};
 }
 
@@ -255,8 +260,10 @@ Fom.checkRemoval = function (startBox){
 			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background")===Fom.color){
 				counter[index]++;
 				storage[index].push(neighbour);
-				// continue checking in the same direction for more bubbles of the same color
-				checkForSameColor(index,neighbour, neighbour+(neighbour-id));
+				var next = neighbour+(neighbour-id);
+				// continue checking in the same direction for more bubbles of the same 
+				// if "next" is a valid neighbour
+				if(Fom.neighbourMapInclDiagonal[neighbour].indexOf(next)>-1){checkForSameColor(index,neighbour, next);}
 			} else {
 				return
 			}
@@ -291,4 +298,25 @@ Fom.checkRemoval = function (startBox){
 	}
 
 	return bubblesRemoved;
+}
+
+Fom.createAnimation = function (path){
+	Fom.animationArray = [];
+	path.reverse();
+	for(var i=0; i<path.length-1; i++){
+		var currentId = path[i];
+		var nextId = path[i+1];
+		if(currentId-nextId === 1){
+			$(".selected").animate({left:"-=49"},100)
+		}
+		if(currentId-nextId === -1){
+			$(".selected").animate({left:"+=49"},100)
+		}
+		if(currentId-nextId === Fom.size){
+			$(".selected").animate({top:"-=49"},100)
+		}
+		if(currentId-nextId === -Fom.size){
+			$(".selected").animate({top:"+=49"},100)
+		}
+	}
 }

@@ -9,8 +9,6 @@ Fom.setup = function(){
 	this.size = 9;
 	this.neighbourMap = []; //only up, down, left, right neighbours
 	this.neighbourMapInclDiagonal = [];
-	this.emptyArea = null;
-	this.checkedIds = null;
 	this.score = 0;
 	this.scoreMap = {};
 	this.rankMap = [[0, "LOOSER"],[200,"BRONZE"],[500, "SILVER"],[1000, "GOLD"],[2000,"LEGEN-DARY"]];
@@ -23,6 +21,7 @@ Fom.setup = function(){
 
 Fom.newGame = function(){
 	Fom.score = 0;
+	$("#score").html(Fom.score);
 	Fom.createGrid();
 	Fom.fillPreview();
 	Fom.addThreeBubbles();
@@ -181,58 +180,57 @@ Fom.validMove = function(targetBox,bubble){
 	var bubbleId = parseInt($(bubble).parent()[0].id);
 	var searching = true;
 	var pathPossible = false;
-	Fom.path = [[bubbleId,0]];
+	Fom.distanceArray = [[bubbleId,0]];
 	Fom.finalPath=[];
 
-	for(var i=0; i<Fom.path.length;i++){
-		var neighbours = Fom.neighbourMap[Fom.path[i][0]];
-		var addMe = [];
-		var pathCounter= Fom.path[i][1]+1;
+	for(var i=0; i<Fom.distanceArray.length;i++){
+		var neighbours = Fom.neighbourMap[Fom.distanceArray[i][0]];
+		var addToDistanceArray = [];
+		var pathCounter= Fom.distanceArray[i][1]+1;
 
 		for(var j=0; j<neighbours.length; j++) {
 			if($("#"+neighbours[j]).children().length<=0){
-				addMe.push(neighbours[j]);
-				for(var k=0; k<Fom.path.length; k++){
-					if(Fom.path[k][0]===addMe[addMe.length-1] && Fom.path[k][1]<=pathCounter){
-						addMe.pop(); break;
+				addToDistanceArray.push(neighbours[j]);
+				for(var k=0; k<Fom.distanceArray.length; k++){
+					if(Fom.distanceArray[k][0]===addToDistanceArray[addToDistanceArray.length-1] && Fom.distanceArray[k][1]<=pathCounter){
+						addToDistanceArray.pop(); break;
 					}
 				}
 			}
 		}
 
-		for(var m=0;m<addMe.length;m++){
-			if(addMe[m]===targetId){ 
+		for(var m=0;m<addToDistanceArray.length;m++){
+			if(addToDistanceArray[m]===targetId){ 
 				searching = false; 
 				pathPossible = true; 
-				Fom.tracePath(targetId, Fom.path); 
+				Fom.tracePath(targetId, Fom.distanceArray); 
 				Fom.finalPath.unshift(targetId);
 				Fom.finalPath.push(bubbleId);
 				return true;
 			} else {
-				Fom.path.push([addMe[m],pathCounter]);
+				Fom.distanceArray.push([addToDistanceArray[m],pathCounter]);
 			}
 		}
 	}
-
 	return pathPossible; 
 }
 
-Fom.tracePath = function(start, pathArray){
-	var n = Fom.neighbourMap[start];
+// Start from targetId and go through distanceArray and find the best path by 
+// always going to the one of the neighbours that is closest to the bubble
+// stop if you reach the element with length 0 (start bubble)
+Fom.tracePath = function(start, distanceArray){
+	var neighbours = Fom.neighbourMap[start];
 	var length=1000;
-	var nId=null;
-	for(var i=0;i<n.length;i++){
-
-		for(var j=0;j<pathArray.length;j++){
-			if(n[i]===pathArray[j][0] && pathArray[j][1]<length){
-				length=pathArray[j][1];
-				nId=n[i];
+	var closestNeighbour=null;
+	for(var i=0;i<neighbours.length;i++){
+		for(var j=0;j<distanceArray.length;j++){
+			if(neighbours[i]===distanceArray[j][0] && distanceArray[j][1]<length){
+				length=distanceArray[j][1];
+				closestNeighbour=neighbours[i];
 			}
 		}
-	console.log(nId + " " +length);
-
 	}
-	if(length!==0){ Fom.finalPath.push(nId);  Fom.tracePath(nId, pathArray)} 
+	if(length!==0){ Fom.finalPath.push(closestNeighbour);  Fom.tracePath(closestNeighbour, distanceArray)} 
 	else{return};
 }
 

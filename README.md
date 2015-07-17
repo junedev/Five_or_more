@@ -28,5 +28,5 @@ Every box on the grid has a consecutive id and before the game starts arrays map
 To check whether there are 5 or more bubbles connected an recursive algorithm checks along each possible direction for bubbles of the same color. A simple version of Dijkstra's algorithm is used for finding one of the shortest pathes on the grid.
 Please see comments inside the code for more details.
 
-JQuery is used througout the app, mainly for selectons but also e.g. to add a fadeOut before removing bubbles from the board.
+JQuery is used throughout the app, mainly for selectons but also e.g. to add a fadeOut before removing bubbles from the board. The jquery animate function is used to create the movement animation on the board.
 Additionally animate.css enables the app to display a pulse effect for the selected bubble. 
