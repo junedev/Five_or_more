@@ -1,6 +1,8 @@
 # Five_or_more
 WDI 14 LND - Project 1
 
+![](./images/screenshot.jpg)
+
 ### Where to find it
 
 Live on the web: **[Five or more](https://sensationnel-saucisson-1393.herokuapp.com/)**

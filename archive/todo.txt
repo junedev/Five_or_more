@@ -1,3 +1,2 @@
-Separate out the files in separate folders
 Put screenshot in readme
 Change design to flat
