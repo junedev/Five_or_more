@@ -1,2 +1,5 @@
-Put screenshot in readme
-Change design to flat
+Alert at the end should not show up multiple times
+Improve design
+- start page with info, scroll down to game
+- roboto font
+Update screenshot in readme
