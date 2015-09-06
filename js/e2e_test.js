@@ -1,25 +1,27 @@
+var chai = require("./vendor/chai.js")
 var expect = chai.expect;
 
 describe("GameController", function() {
-  beforeEach(module('fiveApp'));
-  var $controller;
-  beforeEach(inject(function(_$controller_){
-    $controller = _$controller_;
-  }));
+  browser.get('http://localhost:8000/home.html');
+  // beforeEach(module('fiveApp'));
+  // var $controller;
+  // beforeEach(inject(function(_$controller_){
+  //   $controller = _$controller_;
+  // }));
 
   describe("setup field", function() {
-    var scope, controller;
-    beforeEach(function() {
-      scope = {};
-      controller = $controller('GameController as game', { $scope: scope });
-    });
+    // var scope, controller;
+    // beforeEach(function() {
+    //   scope = {};
+    //   controller = $controller('GameController as game', { $scope: scope });
+    // });
 
     it("has 81 boxes", function() {
-      expect(scope.game.boxes.length).to.equal(81);
+      expect(game.boxes.length).to.equal(81);
     });
 
     it("has 3 bubbles in preview", function(){
-      expect(scope.game.preview.length).to.equal(3);
+      expect(game.preview.length).to.equal(3);
     });
 
     it("has 3 bubbles on the field", function(){
@@ -35,8 +37,8 @@ describe("GameController", function() {
   describe("simple actions on field", function() {
     var scope, controller, spy;
     beforeEach(function() {
-      scope = {};
-      controller = $controller('GameController as game', { $scope: scope });
+      // scope = {};
+      // controller = $controller('GameController as game', { $scope: scope });
       spy = sinon.spy(scope.game, "move");
     });
 
