@@ -28,9 +28,10 @@ describe("Game Play", function() {
 
   describe("moving a bubble", function(){
     var countBefore;
-    beforeEach(function() {
+    beforeEach(function(done) {
       element.all(by.css(".bubble")).count().then(function(result){
         countBefore = result;
+        done();
       })
     });
 
