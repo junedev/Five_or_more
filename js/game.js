@@ -30,6 +30,7 @@ function GameConstructor(){
     var color = this.boxes[fromIndex];
     this.boxes[fromIndex] = null;
     this.boxes[toIndex] = color;
+    this.placeBubbles();
   }
 
   Game.prototype.randomEmptyBox = function(){

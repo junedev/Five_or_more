@@ -12,7 +12,7 @@
   <script type="text/javascript" src="./js/vendor/sinon-1.16.1.js"></script>
   <script>mocha.setup('bdd')</script>
 
-  <script type="text/javascript" src="./js/vendor/jquery-2.1.4.js"></script>
+  
 	<script type="text/javascript" src="./js/vendor/firebase-2.2.2.js"></script>
 	<script type="text/javascript" src="./js/vendor/angular.js"></script>
 	<script type="text/javascript" src="./js/vendor/angularfire.js"></script>
@@ -43,8 +43,8 @@
 		
 		<main ng-controller="GameController as game">
 			<ul id="grid">
-				<li ng-repeat="box in game.boxes track by $index" class="box" id="$index" ng-click="game.activeBubble && game.move($index)">
-					<div id="$index" ng-show="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)" stop-event></div>
+				<li ng-repeat="box in game.boxes track by $index" class="box" ng-click="game.activeBubble && game.move($index)">
+					<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)" stop-event></div>
 				</li>
 			</ul>
 		</main>

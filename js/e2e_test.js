@@ -1,62 +1,56 @@
 var chai = require("./vendor/chai.js")
+var chaiAsPromised = require("./vendor/chai-as-promised.js");
+chai.use(chaiAsPromised);
 var expect = chai.expect;
 
-describe("GameController", function() {
-  browser.get('http://localhost:8000/home.html');
-  // beforeEach(module('fiveApp'));
-  // var $controller;
-  // beforeEach(inject(function(_$controller_){
-  //   $controller = _$controller_;
-  // }));
+describe("Game Play", function() {
+  before(function() {
+    browser.get('http://localhost:8000/home.html');
+  });
 
-  describe("setup field", function() {
-    // var scope, controller;
-    // beforeEach(function() {
-    //   scope = {};
-    //   controller = $controller('GameController as game', { $scope: scope });
-    // });
+  describe("working field", function() {
+    it("has 81 boxes", function(){
+      var e = element.all(by.tagName("li"));
+      expect(e.count()).to.eventually.equal(81);
+    })
 
-    it("has 81 boxes", function() {
-      expect(game.boxes.length).to.equal(81);
+    it("has 3 bubbles", function(){
+      var e = element.all(by.css(".bubble"));
+      expect(e.count()).to.eventually.equal(3);
+    })
+
+    it("can activate a bubble by clicking on it", function(){
+      var e = element.all(by.css(".bubble")).first();
+      e.click();
+      expect(e.getAttribute("class")).to.eventually.equal("bubble animated infinite ng-scope pulse");
+    })
+  });
+
+  describe("moving a bubble", function(){
+    var countBefore;
+    beforeEach(function() {
+      element.all(by.css(".bubble")).count().then(function(result){
+        countBefore = result;
+      })
     });
 
-    it("has 3 bubbles in preview", function(){
-      expect(game.preview.length).to.equal(3);
+    //doesn't work if this comes as second test ...
+    it("adds 3 bubbles after moving one around", function(){
+      var e = element.all(by.css(".bubble")).first();
+      var box = element.all(by.css(".box")).last();
+      e.click();
+      box.click();
+      expect(element.all(by.css(".bubble")).count()).to.eventually.equal(countBefore+3);
     });
 
-    it("has 3 bubbles on the field", function(){
-      var counter = 0;
-      for(var i=0; i<scope.game.boxes.length; i++){
-        if(scope.game.boxes[i]) counter++;
-      }
-      expect(counter).to.equal(3);
+    it("changes the place", function(){
+      var e = element.all(by.css(".bubble")).first();
+      var box = element.all(by.css(".box")).last();
+      e.click();
+      box.click();
+      expect(box.all(by.css(".bubble")).count()).to.eventually.equal(1);
     });
 
   });
 
-  describe("simple actions on field", function() {
-    var scope, controller, spy;
-    beforeEach(function() {
-      // scope = {};
-      // controller = $controller('GameController as game', { $scope: scope });
-      spy = sinon.spy(scope.game, "move");
-    });
-
-    it("has no bubble selected before a click", function(){
-      expect(scope.game.activeBubble).to.not.exist;
-    })
-
-    it("empty boxes are not clickable before there is a bubble selected", function(done){
-      console.log(scope.game.boxes);
-      $("li#1").click();
-      expect(spy.called).to.equal(false);
-      done();
-    })
-
-    it("has a bubble selected after click on bubble", function(){
-      //$("div#"+box).click();
-      expect(scope.game.activeBubble).to.exist;
-    })
-
-  })
 });
