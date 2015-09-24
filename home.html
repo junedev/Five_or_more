@@ -43,8 +43,8 @@
 		
 		<main ng-controller="GameController as game">
 			<ul id="grid">
-				<li ng-repeat="box in game.boxes track by $index" class="box" ng-click="game.activeBubble && game.move($index)">
-					<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)" stop-event></div>
+				<li ng-repeat="box in game.boxes track by $index" class="box" id="{{$index}}" ng-click="!box && (game.activeBubble && game.move($index))">
+					<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)"></div>
 				</li>
 			</ul>
 		</main>
