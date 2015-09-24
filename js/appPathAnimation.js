@@ -17,11 +17,13 @@ Fom.setup = function(){
 	this.fillNeighbourMap();
 	this.fillNeighbourMapInclDiagonal();
 	this.newGame();
+	this.gameStopped = false;
 	$("#reset").on("click",Fom.newGame);
 }
 
 Fom.newGame = function(){
 	Fom.score = 0;
+	Fom.gameStopped = false;
 	$("#score").html(Fom.score);
 	Fom.createGrid();
 	Fom.fillPreview();
@@ -106,9 +108,9 @@ Fom.isFull=function(){
 	var $emptyBoxes = $("#grid").find(".box:empty");
 	if($emptyBoxes.length === 0){
 		for(var i=Fom.rankMap.length-1; i>=0; i--){
-			if(Fom.score >= Fom.rankMap[i][0]){
+			if(!Fom.gameStopped && Fom.score >= Fom.rankMap[i][0]){
 				alert("You earned the rank " + Fom.rankMap[i][1] + "!");
-				i=-1;
+				Fom.gameStopped = true;
 			}
 		}
 		return true;
