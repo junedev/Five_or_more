@@ -11,14 +11,8 @@
 	<script type="text/javascript" src="./js/appPathAnimation.js"></script>
 </head>
 <body>
-
-	<h1>Connect <strong>Five or more</strong></h1>
-	<div id="outerContainer">
-
-		<main>
-			<div id="grid"></div>
-			<p id="message"></p>
-		</main>
+	<div id="wrapper">
+	<h1>Build lines of <strong>Five or more</strong></h1>
 
 		<aside>
 			<p id="previewText">Up next:</p>
@@ -27,14 +21,18 @@
 			<p id="text">
 				Click on a bubble to pick it up. Click on a box to move it there but be aware 
 				your bubble can't move along diagonals and needs a free path to reach it's target.
-				Try to connect <strong>Five or more</strong> in a row, column or diagonal to make them vanish 
-				from the board. But be careful, every time you move a bubble and don't connect 
-				<strong> Five or more </strong> your enemy places three new bubbles on the board.
+				Try to build lines of <strong>Five or more</strong> bubbles to make them vanish 
+				from the board. But be careful, every time you move a bubble and don't crate a line
+				 your enemy places three new bubbles on the board.
 			</p>
-			<button type="button" id="reset">New Game</button>
+			<button type="button" id="reset" class="btn">New Game</button>
 		</aside>
 
-	</div>
+		<main>
+			<div id="grid"></div>
+			<p id="message"></p>
+		</main>
 
+</div>
 </body>
 </html>

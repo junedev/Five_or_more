@@ -124,11 +124,11 @@ Fom.addThreeBubbles=function(){
 		if($emptyBoxes.length>0){
 			var box = $emptyBoxes[Math.floor(Math.random()*$emptyBoxes.length)];
 			var $nextBubble = $("#preview .bubble:first-child");
+			$nextBubble.detach().appendTo(box);
 			$nextBubble.css('position','absolute');
 			$nextBubble.css('top', 0);
-			$nextBubble.css('left', '3px');
+			$nextBubble.css('left', 0);
 			$nextBubble.css('z-index', 2000);
-			$nextBubble.detach().appendTo(box);
 			Fom.checkRemoval(box);
 			setTimeout(Fom.isFull,510);
 		} 
@@ -139,14 +139,14 @@ Fom.addThreeBubbles=function(){
 Fom.addBubble = function(parent){
 	var $newBubble=$(document.createElement("button"));
 	$newBubble.prop("type","button");
-	$newBubble.css("background","radial-gradient(circle at 10px 15px, "+Fom.colorPicker()+", rgba(0,0,0,1))");
+	$newBubble.css("background-color",Fom.colorPicker());
 	$newBubble.addClass("bubble");
 	$newBubble.on("click",Fom.bubbleEvent);
 	parent.appendChild($newBubble[0]);
 }
 
 Fom.colorPicker=function (){
-	var colors=["rgb(221, 14, 48)", "rgb(89, 130, 218)", "rgb(133, 5, 104)", "rgb(4, 109, 16)", "rgb(18, 142, 145)", "rgb(251, 207, 1)","rgb(235, 124, 4)"];
+	var colors=["#06AED5", "#086788", "#F0C808", "#FFF1D0", "#DD1C1A", "#253031","#E9724C"];
 	return colors[Math.floor(Math.random()*colors.length)];
 }
 
@@ -167,15 +167,13 @@ Fom.boxEvent = function(){
 	$("#message").html("");
 	if(Fom.validMove(event.currentTarget,$(".selected")[0])){
 		Fom.createAnimation(Fom.finalPath);
+		$(".selected").removeClass("animated infinite pulse");
 		setTimeout(function(){
-			$(".selected").css("top",0);
-			$(".selected").css("left","3px");
-			$(".selected").removeClass("animated infinite pulse");
 			$(".selected").detach().appendTo(Fom.target);
-			$(".selected").removeClass("selected");
+			$(".selected").css("top",0).css("left",0).removeClass("selected");
 			if(!Fom.checkRemoval(Fom.target)){Fom.addThreeBubbles();}
 			$(".box").prop("disabled",true);
-		},(Fom.finalPath.length-1)*110);
+		},(Fom.finalPath.length)*110);
 	}
 	else{
 		$("#message").html("You can't move there.")
@@ -244,7 +242,7 @@ Fom.tracePath = function(start, distanceArray){
 
 // Check whether there are 5 or more connected bubbles and if yes, remove them
 Fom.checkRemoval = function (startBox){
-	Fom.color = $(startBox).children().css("background");
+	Fom.color = $(startBox).children().css("background-color");
 	// the four dimensions in counter and storage correspond to the four possible
 	// directions to get 5 or more: up to down / left to right / 
 	// up-left to down right / up right to down left
@@ -257,7 +255,7 @@ Fom.checkRemoval = function (startBox){
 
 	var checkForSameColor = function(index, id, neighbour){
 		if(!isNaN(neighbour)){
-			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background")===Fom.color){
+			if( $("#"+neighbour).children().length>0 && $("#"+neighbour).children().css("background-color")===Fom.color){
 				counter[index]++;
 				storage[index].push(neighbour);
 				var next = neighbour+(neighbour-id);
@@ -265,7 +263,7 @@ Fom.checkRemoval = function (startBox){
 				// if "next" is a valid neighbour
 				if(Fom.neighbourMapInclDiagonal[neighbour].indexOf(next)>-1){checkForSameColor(index,neighbour, next);}
 			} else {
-				return
+				return false;
 			}
 		}
 	}
