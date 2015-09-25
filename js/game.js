@@ -85,8 +85,7 @@ function GameConstructor(){
     // update score by the correct amount depending on number of bubbles removed
     if(bubbleCount!==0){
       bubbleCount++; //add initial bubble to bubbles count
-      // score += Game.scoreMap[bubbleCount];
-      score += 100;
+      score += scoreMap[bubbleCount];
     }
 
     return score;
@@ -99,6 +98,17 @@ function GameConstructor(){
     var colors=["#06AED5", "#086788", "#F0C808", "#FFF1D0", "#DD1C1A", "#253031","#E9724C"];
     return colors[Math.floor(Math.random()*colors.length)];
   }
+
+  var scoreMap = (function(){
+    var add = 2;
+    result = [];
+    result[5] = 10;
+    // score formula reverse engineered from original game
+    for(var i=6; i<=13; i++){
+      result[i] = add + result[i-1];
+    }
+    return result;
+  })();
 
   // directions hard-coded since for loop wouldn't give the exact order needed
   DIRECTIONS = [[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,1],[-1,1],[1,-1]];
