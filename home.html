@@ -25,12 +25,12 @@
 
 </head>
 <body ng-controller="MainController as main">
-	<div id="wrapper">
+	<div id="wrapper" ng-controller="GameController as game">
 		<h1>Build lines of <strong>Five or more</strong></h1>
 		<aside>
 			<p id="previewText">Up next:</p>
 			<div id="preview"></div>
-			<div id="scoreText">Your score: <p id="score">0</p></div>
+			<div id="scoreText">Your score: <strong>{{game.score}}</strong></div>
 <!-- 			<p id="text">
 				Click on a bubble to pick it up. Click on a box to move it there but be aware 
 				your bubble can't move along diagonals and needs a free path to reach it's target.
@@ -41,7 +41,7 @@
 			<button type="button" id="reset" class="btn">New Game</button>
 		</aside>
 		
-		<main ng-controller="GameController as game">
+		<main>
 			<ul id="grid">
 				<li ng-repeat="box in game.boxes track by $index" class="box" id="{{$index}}" ng-click="!box && (game.activeBubble && game.move($index))">
 					<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)"></div>
