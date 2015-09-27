@@ -1,7 +1,8 @@
-angular.module("fiveApp")
-.service("Game",GameConstructor);
+(function(){
+  'use strict';
 
-function GameConstructor(){
+  angular.module("fiveApp")
+  .service("Game",Game);
 
   function Game(){
     var self = this;
@@ -15,7 +16,7 @@ function GameConstructor(){
     for(var i=0; i<3; i++){
       this.preview.push(colorPicker());
     }
-  }
+  };
 
   Game.prototype.placeBubbles = function(){
     for(var i=0; i<3; i++){
@@ -23,14 +24,14 @@ function GameConstructor(){
       this.boxes[this.randomEmptyBox()] = color;
     }
     this.fillPreview();
-  }
+  };
 
   Game.prototype.moveBubble = function(fromIndex, toIndex){
     var color = this.boxes[fromIndex];
     this.boxes[fromIndex] = null;
     this.boxes[toIndex] = color;
     this.placeBubbles();
-  }
+  };
 
   Game.prototype.randomEmptyBox = function(){
     var indexOfEmptyBoxes = [];
@@ -38,12 +39,13 @@ function GameConstructor(){
       if(!this.boxes[i]) indexOfEmptyBoxes.push(i);
     }
     return indexOfEmptyBoxes[Math.floor(Math.random()*indexOfEmptyBoxes.length)];
-  }
+  };
 
   Game.prototype.getScore = function(currentIndex){
     var self = this;
     var color = self.boxes[currentIndex];
     var score = 0;
+    var i;
 
     // the four dimensions storage correspond to the four possible
     // directions to get 5 or more
@@ -53,7 +55,7 @@ function GameConstructor(){
 
     // for each of the 4 dimensions check for bubbles of same color as start bubble
     // check both possible directions (e.g. up and down) for each dimension
-    for(var i=0; i<storage.length;i++){
+    for(i=0; i<storage.length;i++){
       checkForSameColor(i,currentIndex,currentNeighbours[i*2]);
       checkForSameColor(i,currentIndex,currentNeighbours[i*2+1]);
     }
@@ -71,15 +73,16 @@ function GameConstructor(){
     }
 
     // remove bubbles if more than 5 were found in one or more dimensions
-    for(var i=0; i<storage.length; i++){
+    for(i=0; i<storage.length; i++){
       if(storage[i].length >= 4){
-        bubblesRemoved = true;
         bubbleCount += storage[i].length;
         storage[i].push(currentIndex);
-        storage[i].forEach(function(index){
-          self.boxes[index] = null;
-        });
+        storage[i].forEach(resetBox);
       }
+    }
+
+    function resetBox(index){
+      self.boxes[index] = null;
     }
 
     // update score by the correct amount depending on number of bubbles removed
@@ -89,8 +92,7 @@ function GameConstructor(){
     }
 
     return score;
-  }
-
+  };
 
   // ------- HELPER METHODS --------
 
@@ -101,17 +103,18 @@ function GameConstructor(){
 
   var scoreMap = (function(){
     var add = 2;
-    result = [];
+    var result = [];
     result[5] = 10;
     // score formula reverse engineered from original game
     for(var i=6; i<=13; i++){
       result[i] = add + result[i-1];
+      add += 4;
     }
     return result;
   })();
 
   // directions hard-coded since for loop wouldn't give the exact order needed
-  DIRECTIONS = [[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,1],[-1,1],[1,-1]];
+  var DIRECTIONS = [[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,1],[-1,1],[1,-1]];
 
   // get index of neighbours of a box incl. the diagonal ones
   // fixed order of direction, includes null if no neighbour exists
@@ -127,16 +130,16 @@ function GameConstructor(){
         coordinates.push(null);
       }
     });
-    return coordinates.map(function(coord){ return toIndex(coord) });
+    return coordinates.map(function(coord){ return toIndex(coord); });
   }
 
   // get index of neighbours of a box excl. the diagonal ones and empty elements
   function neighbours(i){
-    return allNeighbours(i).splice(0,4).filter(function(i){ return !!i });
+    return allNeighbours(i).splice(0,4).filter(function(i){ return !!i; });
   }
 
   function toCoordinate(index){
-    return [parseInt(index/9), index%9]
+    return [parseInt(index/9), index%9];
   }
 
   function toIndex(coordinate){
@@ -149,6 +152,5 @@ function GameConstructor(){
     var y = coord[1];
     return ((x >= 0 && y >= 0) && x < 9) && y < 9;
   }
-  
-  return Game;
-}
+
+})();

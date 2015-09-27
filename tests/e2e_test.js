@@ -1,5 +1,5 @@
-var chai = require("./vendor/chai.js")
-var chaiAsPromised = require("./vendor/chai-as-promised.js");
+var chai = require("../js/vendor/chai.js")
+var chaiAsPromised = require("../js/vendor/chai-as-promised.js");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
@@ -8,7 +8,7 @@ describe("Simple Game Play", function() {
     browser.get('http://localhost:8000/home.html');
   });
 
-  describe("fresh board", function() {
+  describe("Initial board", function() {
     it("has 81 boxes", function(){
       var e = element.all(by.tagName("li"));
       expect(e.count()).to.eventually.equal(81);
@@ -26,7 +26,7 @@ describe("Simple Game Play", function() {
     });
   });
 
-  describe("moving a bubble", function(){
+  describe("Moving a bubble", function(){
 
     var countBefore;
     var boxId;

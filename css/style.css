@@ -89,13 +89,8 @@ aside {
 	border-radius:50%;
 }
 
-#preview button{
-	margin: 5px 5px 10px 5px;
-	pointer-events:none;
-}
-
-#preview {
-	margin-bottom: 10px;
+.preview {
+	display: inline-block;
 }
 
 p {
