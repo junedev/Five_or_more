@@ -8,6 +8,8 @@
     var self = this;
     self.boxes = new Array(9*9);
     self.preview = [];
+    self.distanceArray = null;
+    self.finalPath = null;
     self.fillPreview();
     self.placeBubbles();
   }
@@ -27,10 +29,12 @@
   };
 
   Game.prototype.moveBubble = function(fromIndex, toIndex){
-    var color = this.boxes[fromIndex];
-    this.boxes[fromIndex] = null;
-    this.boxes[toIndex] = color;
-    this.placeBubbles();
+    if(this.getPath(fromIndex, toIndex)){
+      var color = this.boxes[fromIndex];
+      this.boxes[fromIndex] = null;
+      this.boxes[toIndex] = color;
+      this.placeBubbles();
+    }
   };
 
   Game.prototype.randomEmptyBox = function(){
@@ -93,6 +97,44 @@
 
     return score;
   };
+
+  Game.prototype.getPath = function(bubbleId, targetId){
+    var i,j,k;
+    var self = this;
+    self.distanceArray = [[bubbleId,0]];
+    self.finalPath = [];
+
+    // Path-finding using Dijkstra's algorithm (see https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
+    // has to be done with for loops as forEach can't work on arrays that change size
+    for(i=0; i<self.distanceArray.length; i++){
+      var currentNeighbours = neighbours(self.distanceArray[i][0]);
+      var addToDistanceArray = [];
+      var pathCounter = self.distanceArray[i][1]+1;
+
+      for(j=0; j<currentNeighbours.length; j++) {
+        if(!self.boxes[currentNeighbours[j]]){
+          addToDistanceArray.push(currentNeighbours[j]);
+          for(k=0; k<self.distanceArray.length; k++){
+            if(self.distanceArray[k][0]===addToDistanceArray[addToDistanceArray.length-1] && self.distanceArray[k][1]<=pathCounter){
+              addToDistanceArray.pop(); break;
+            }
+          }
+        }
+      }
+
+      for(j=0;j<addToDistanceArray.length;j++){
+        if(addToDistanceArray[j]===targetId){ 
+          //self.tracePath(targetId, self.distanceArray); 
+          //self.finalPath.unshift(targetId);
+          //self.finalPath.push(bubbleId);
+          return true;
+        } else {
+          self.distanceArray.push([addToDistanceArray[j],pathCounter]);
+        }
+      }
+    }
+    return false; 
+  }
 
   // ------- HELPER METHODS --------
 

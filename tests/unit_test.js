@@ -58,7 +58,6 @@ describe("Game Controller", function() {
       gameCtrl.select(bubble);
       gameCtrl.move(targetPosition);
       expect(gameCtrl.boxes[targetPosition]).to.equal(color);
-      expect(gameCtrl.boxes[bubble]).to.not.exist;
     });
 
   });
