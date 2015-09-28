@@ -17,8 +17,9 @@ function GameController(Game){
   }
 
   self.move = function(index){
-    Game.moveBubble(self.activeBubble, index);
-    self.score += Game.getScore(index);
-    self.activeBubble = null;
+    if(Game.moveBubble(self.activeBubble, index)){
+      self.score += Game.getScore(index);
+      self.activeBubble = null;
+    }
   }
 }

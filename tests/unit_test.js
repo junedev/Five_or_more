@@ -150,6 +150,15 @@ describe("Game Service", function(){
       expect(gameObj.boxes[9]).to.not.exist;
     });
 
+    it("is the shortest path possible", function(){
+      var bubbles = [9, 10, 11, 12, 18];
+      bubbles.forEach(function(index){
+        gameObj.boxes[index] = color;
+      });
+      expect(gameObj.moveBubble(18,0)).to.be.true;
+      expect(gameObj.finalPath).to.deep.equal([18, 19, 20, 21, 22, 13, 4, 3, 2, 1, 0]);
+    })
+
   });
   
 });

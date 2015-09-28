@@ -8,8 +8,8 @@
     var self = this;
     self.boxes = new Array(9*9);
     self.preview = [];
-    self.distanceArray = null;
-    self.finalPath = null;
+    self.distanceArray;
+    self.finalPath;
     self.fillPreview();
     self.placeBubbles();
   }
@@ -34,7 +34,9 @@
       this.boxes[fromIndex] = null;
       this.boxes[toIndex] = color;
       this.placeBubbles();
+      return true;
     }
+    return false;
   };
 
   Game.prototype.randomEmptyBox = function(){
@@ -65,7 +67,7 @@
     }
 
     function checkForSameColor(dim, currentIndex, neighbour){
-      if(!isNaN(neighbour) && color==self.boxes[neighbour]){
+      if(neighbour!==null && color==self.boxes[neighbour]){
         storage[dim].push(neighbour);
         // continue checking in the same direction for more bubbles of the same color
         // if the next candidate is a valid neighbour
@@ -99,41 +101,62 @@
   };
 
   Game.prototype.getPath = function(bubbleId, targetId){
-    var i,j,k;
+    var i,j;
     var self = this;
     self.distanceArray = [[bubbleId,0]];
     self.finalPath = [];
+    function checkNeighbourDistances(neighbour){
+      if(!self.boxes[neighbour] && !self.distanceArray.some(neighbourIncluded)) addToDistanceArray.push(neighbour);
+      function neighbourIncluded(element){
+        return element[0]===neighbour && element[1]<=currentDistance;
+      }
+    }
 
     // Path-finding using Dijkstra's algorithm (see https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
-    // has to be done with for loops as forEach can't work on arrays that change size
+    // Has to be done with for-loops as forEach can't work on arrays that change size
     for(i=0; i<self.distanceArray.length; i++){
       var currentNeighbours = neighbours(self.distanceArray[i][0]);
       var addToDistanceArray = [];
-      var pathCounter = self.distanceArray[i][1]+1;
+      var currentDistance = self.distanceArray[i][1]+1;
 
-      for(j=0; j<currentNeighbours.length; j++) {
-        if(!self.boxes[currentNeighbours[j]]){
-          addToDistanceArray.push(currentNeighbours[j]);
-          for(k=0; k<self.distanceArray.length; k++){
-            if(self.distanceArray[k][0]===addToDistanceArray[addToDistanceArray.length-1] && self.distanceArray[k][1]<=pathCounter){
-              addToDistanceArray.pop(); break;
-            }
-          }
-        }
-      }
+      currentNeighbours.forEach(checkNeighbourDistances);
 
       for(j=0;j<addToDistanceArray.length;j++){
-        if(addToDistanceArray[j]===targetId){ 
-          //self.tracePath(targetId, self.distanceArray); 
-          //self.finalPath.unshift(targetId);
-          //self.finalPath.push(bubbleId);
+        if(addToDistanceArray[j]===targetId){
+          self.fillPathArray(targetId);
+          self.finalPath.unshift(targetId);
+          self.finalPath.push(bubbleId);
+          self.finalPath.reverse();
           return true;
         } else {
-          self.distanceArray.push([addToDistanceArray[j],pathCounter]);
+          self.distanceArray.push([addToDistanceArray[j],currentDistance]);
         }
       }
     }
-    return false; 
+    return false;
+  };
+
+  // Start from targetId and go through distanceArray and find the best path by 
+  // always going to the neighbour that is closest to the bubble
+  // stop if you reach the element with length 0 (bubble position)
+  Game.prototype.fillPathArray = function(currentId){
+    var currentNeighbours = neighbours(currentId);
+    var distance = 1000;
+    var closestNeighbour;
+    for(var i=0; i<currentNeighbours.length; i++){
+      for(var j=0; j<this.distanceArray.length; j++){
+        if(currentNeighbours[i]===this.distanceArray[j][0] && this.distanceArray[j][1]<distance){
+          distance = this.distanceArray[j][1];
+          closestNeighbour = currentNeighbours[i];
+        }
+      }
+    }
+    if(distance === 0){
+      return true;
+    } else{
+      this.finalPath.push(closestNeighbour); 
+      this.fillPathArray(closestNeighbour);
+    };
   }
 
   // ------- HELPER METHODS --------
@@ -177,7 +200,7 @@
 
   // get index of neighbours of a box excl. the diagonal ones and empty elements
   function neighbours(i){
-    return allNeighbours(i).splice(0,4).filter(function(i){ return !!i; });
+    return allNeighbours(i).splice(0,4).filter(function(i){ return i!==null; });
   }
 
   function toCoordinate(index){
