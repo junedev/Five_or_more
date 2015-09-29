@@ -14,7 +14,7 @@
     self.preview = Game.preview;
     self.message = "";
 
-    $scope.$apply(function(){
+    $scope.$watch(function(){
       if(Game.stopGame) {
         ngDialog.open({
           template: '<p>Template test</p>',

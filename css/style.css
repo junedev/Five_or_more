@@ -76,7 +76,7 @@ aside {
 	background-color: #DBE9EE;
 }
 
-.bubble{
+.bubble, .previewBubble{
 	z-index: 1000;
 	width:43px;
 	height: 43px;
@@ -93,7 +93,7 @@ aside {
 	border-radius:50%;
 }
 
-.preview.bubble {
+.previewBubble {
 	position: static;
 	display: inline-block;
 }

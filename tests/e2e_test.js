@@ -10,7 +10,7 @@ describe("Simple Game Play", function() {
 
   describe("Initial board", function() {
     it("has 81 boxes", function(){
-      var e = element.all(by.tagName("li"));
+      var e = element.all(by.className("box"));
       expect(e.count()).to.eventually.equal(81);
     });
 
@@ -45,18 +45,20 @@ describe("Simple Game Play", function() {
     });
 
     it("changes the place of the bubble", function(){
-      var e = element.all(by.css(".bubble")).first();
+      var bubble = element.all(by.css(".bubble")).first();
       var box = element.all(by.css(".box")).get(boxId);
-      e.click();
+      bubble.click();
       box.click();
+      browser.driver.wait(protractor.until.elementLocated(By.xpath("//li[contains(@id, '" + boxId + "') and count(*)=1]")), 10000);
       expect(box.all(by.css(".bubble")).count()).to.eventually.equal(1);
     });
 
     it("adds 3 bubbles after the movement", function(){
-      var e = element.all(by.css(".bubble")).last();
-      var box = element.all(by.css(".box")).last();
-      e.click();
+      var bubble = element.all(by.css(".bubble")).last();
+      var box = element.all(by.css(".box")).get(boxId);
+      bubble.click();
       box.click();
+      browser.driver.wait(protractor.until.elementLocated(By.xpath("//li[contains(@id, '" + boxId + "') and count(*)=1]")), 10000);
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(countBefore+3);
     });
   });
