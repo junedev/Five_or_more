@@ -8,10 +8,11 @@
     var self = this;
     self.boxes = new Array(9*9);
     self.preview = [];
-    self.distanceArray;
-    self.finalPath;
+    self.distanceArray = [];
+    self.finalPath = [];
     self.fillPreview();
     self.placeBubbles();
+    self.stopGame = false;
   }
 
   Game.prototype.fillPreview = function(){
@@ -22,10 +23,25 @@
 
   Game.prototype.placeBubbles = function(){
     for(var i=0; i<3; i++){
-      var color = this.preview.shift();
-      this.boxes[this.randomEmptyBox()] = color;
+      var boxIndex = this.randomEmptyBox();
+
+      if(boxIndex !== false){
+        var color = this.preview.shift();
+        this.boxes[boxIndex] = color;
+      }
+
+      if(boxIndex === false || getEmptyBoxes(this.boxes).length < 1){
+        this.stopGame = true;
+        return;
+      }
     }
     this.fillPreview();
+  };
+
+  Game.prototype.randomEmptyBox = function(){
+    var emptyBoxes = getEmptyBoxes(this.boxes);
+    if(emptyBoxes.length < 1) return false;
+    return emptyBoxes[Math.floor(Math.random()*emptyBoxes.length)];
   };
 
   Game.prototype.moveBubble = function(fromIndex, toIndex){
@@ -34,29 +50,22 @@
     this.placeBubbles();
   };
 
-  Game.prototype.randomEmptyBox = function(){
-    var indexOfEmptyBoxes = [];
-    for(var i=0; i<this.boxes.length; i++){
-      if(!this.boxes[i]) indexOfEmptyBoxes.push(i);
-    }
-    return indexOfEmptyBoxes[Math.floor(Math.random()*indexOfEmptyBoxes.length)];
-  };
 
   Game.prototype.getScore = function(currentIndex){
     var self = this;
     var color = self.boxes[currentIndex];
     var score = 0;
+    var currentNeighbours = allNeighbours(currentIndex);
+    var bubbleCount = 0;
     var i;
 
     // the four dimensions storage correspond to the four possible
     // directions to get 5 or more
     var storage = [[],[],[],[]];
-    var currentNeighbours = allNeighbours(currentIndex);
-    var bubbleCount = 0;
 
     // for each of the 4 dimensions check for bubbles of same color as start bubble
     // check both possible directions (e.g. up and down) for each dimension
-    for(i=0; i<storage.length;i++){
+    for(i=0; i<storage.length; i++){
       checkForSameColor(i,currentIndex,currentNeighbours[i*2]);
       checkForSameColor(i,currentIndex,currentNeighbours[i*2+1]);
     }
@@ -95,7 +104,7 @@
     return score;
   };
 
-  Game.prototype.getPath = function(bubbleId, targetId){
+  Game.prototype.fillPath = function(bubbleId, targetId){
     var i,j;
     var self = this;
     self.distanceArray = [[bubbleId,0]];
@@ -151,17 +160,10 @@
     } else{
       this.finalPath.push(closestNeighbour); 
       this.fillPathArray(closestNeighbour);
-    };
-  }
+    }
+  };
 
-  // Game.prototype.animatePath = function(){
-  //   for (var i = 1; i < this.finalPath.length; i++) {
-  //     this.boxes[this.finalPath[i]] = this.boxes[this.finalPath[i-1]];
-  //     this.boxes[this.finalPath[i-1]] = null;
-  //   };
-  // }
-
-  // ------- HELPER METHODS --------
+  // ------- INDEPENDENT HELPER METHODS --------
 
   function colorPicker(){
     var colors=["#06AED5", "#086788", "#F0C808", "#FFF1D0", "#DD1C1A", "#253031","#E9724C"];
@@ -179,6 +181,14 @@
     }
     return result;
   })();
+
+  function getEmptyBoxes(array){
+    var emptyBoxes = [];
+    for(var i=0; i<array.length; i++){
+      if(!array[i]) emptyBoxes.push(i); //not operator is ok since array elements are never 0
+    }
+    return emptyBoxes;
+  }
 
   // directions hard-coded since for loop wouldn't give the exact order needed
   var DIRECTIONS = [[0,-1],[0,1],[-1,0],[1,0],[-1,-1],[1,1],[-1,1],[1,-1]];

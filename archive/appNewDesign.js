@@ -11,7 +11,7 @@
 // 	this.neighbourMapInclDiagonal = [];
 // 	this.score = 0;
 // 	this.scoreMap = {};
-// 	this.rankMap = [[0, "LOOSER"],[200,"BRONZE"],[500, "SILVER"],[1000, "GOLD"],[2000,"LEGEN-DARY"]];
+ 	this.rankMap = [[0, "LOOSER"],[200,"BRONZE"],[500, "SILVER"],[1000, "GOLD"],[2000,"LEGEN-DARY"]];
 // 	this.animationArray = [];
 // 	this.fillScoreMap();
 // 	this.fillNeighbourMap();

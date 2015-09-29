@@ -1,13 +1,14 @@
 var expect = chai.expect;
 
 describe("Game Controller", function() {
-  var $controller, gameCtrl;
+  var $controller, gameCtrl, scope;
   beforeEach(function(){
     module('fiveApp');
-    inject(function(_$controller_){
+    inject(function(_$controller_,$rootScope){
+      scope = $rootScope.$new();
       $controller = _$controller_;
     });
-    gameCtrl = $controller('GameController');
+    gameCtrl = $controller('GameController',{$scope: scope});
   });
 
   describe("Inital board", function() {
@@ -29,7 +30,7 @@ describe("Game Controller", function() {
     });
 
     it("has no bubble selected", function(){
-      expect(gameCtrl.activeBubble).to.not.exist;
+      expect(gameCtrl.activeBubble).to.be.null;
     });
   });
 
@@ -61,6 +62,18 @@ describe("Game Controller", function() {
     });
 
   });
+
+  // describe("End of game", function(){
+
+  //   beforeEach(function(){
+
+  //   })
+
+  //   it("stops the game when the board is full", function(){
+
+  //   });
+
+  // });
 
 });
 
@@ -104,8 +117,8 @@ describe("Game Service", function(){
 
     it("removes 5 bubbles in a row and gives 10 points", function(){
       for (var i = 0; i < 4; i++) {
-          gameObj.boxes[i] = color;
-          expect(gameObj.getScore(i)).to.equal(0);
+        gameObj.boxes[i] = color;
+        expect(gameObj.getScore(i)).to.equal(0);
       }
       gameObj.boxes[4] = color;
       expect(gameObj.getScore(4)).to.equal(10);
@@ -146,8 +159,9 @@ describe("Game Service", function(){
       bubbles.forEach(function(index){
         gameObj.boxes[index] = color;
       });
-      gameObj.moveBubble(1,9);
+      if(gameObj.fillPath(1,9)) gameObj.moveBubble(1,9);
       expect(gameObj.boxes[9]).to.not.exist;
+      expect(gameObj.boxes[1]).to.equal(color);
     });
 
     it("is the shortest path possible", function(){
@@ -155,9 +169,22 @@ describe("Game Service", function(){
       bubbles.forEach(function(index){
         gameObj.boxes[index] = color;
       });
-      expect(gameObj.moveBubble(18,0)).to.be.true;
+      expect(gameObj.fillPath(18,0)).to.be.true;
       expect(gameObj.finalPath).to.deep.equal([18, 19, 20, 21, 22, 13, 4, 3, 2, 1, 0]);
-    })
+    });
+
+  });
+
+  describe("Ending", function(){
+
+    it("sets flag for game end when the board is full", function(){
+      for (var i = 0; i < 25; i++) {
+        gameObj.placeBubbles();
+      };
+      expect(gameObj.stopGame).to.be.false;
+      gameObj.placeBubbles();
+      expect(gameObj.stopGame).to.be.true;
+    });
 
   });
   
