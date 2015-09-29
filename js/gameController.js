@@ -71,5 +71,10 @@
         self.score += Game.getScore(targetPosition);
       });
     };
+
+    self.boxReachable = function(targetId){
+      if(self.activeBubble === null) return false;
+      return Game.pathPossible(self.activeBubble, targetId);
+    };
   }
 })();
