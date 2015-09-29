@@ -105,10 +105,22 @@
   };
 
   Game.prototype.fillPath = function(bubbleId, targetId){
+    this.finalPath = [];
+    if(this.pathPossible(bubbleId, targetId)){
+      this.fillPathArray(targetId);
+      this.finalPath.unshift(targetId);
+      this.finalPath.push(bubbleId);
+      this.finalPath.reverse();
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  Game.prototype.pathPossible = function(bubbleId, targetId){
     var i,j;
     var self = this;
     self.distanceArray = [[bubbleId,0]];
-    self.finalPath = [];
     function checkNeighbourDistances(neighbour){
       if(!self.boxes[neighbour] && !self.distanceArray.some(neighbourIncluded)) addToDistanceArray.push(neighbour);
       function neighbourIncluded(element){
@@ -127,10 +139,6 @@
 
       for(j=0;j<addToDistanceArray.length;j++){
         if(addToDistanceArray[j]===targetId){
-          self.fillPathArray(targetId);
-          self.finalPath.unshift(targetId);
-          self.finalPath.push(bubbleId);
-          self.finalPath.reverse();
           return true;
         } else {
           self.distanceArray.push([addToDistanceArray[j],currentDistance]);
