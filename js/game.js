@@ -29,14 +29,9 @@
   };
 
   Game.prototype.moveBubble = function(fromIndex, toIndex){
-    if(this.getPath(fromIndex, toIndex)){
-      var color = this.boxes[fromIndex];
-      this.boxes[fromIndex] = null;
-      this.boxes[toIndex] = color;
-      this.placeBubbles();
-      return true;
-    }
-    return false;
+    this.boxes[toIndex] = this.boxes[fromIndex];
+    this.boxes[fromIndex] = null;
+    this.placeBubbles();
   };
 
   Game.prototype.randomEmptyBox = function(){
@@ -158,6 +153,13 @@
       this.fillPathArray(closestNeighbour);
     };
   }
+
+  // Game.prototype.animatePath = function(){
+  //   for (var i = 1; i < this.finalPath.length; i++) {
+  //     this.boxes[this.finalPath[i]] = this.boxes[this.finalPath[i-1]];
+  //     this.boxes[this.finalPath[i-1]] = null;
+  //   };
+  // }
 
   // ------- HELPER METHODS --------
 

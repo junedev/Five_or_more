@@ -17,6 +17,7 @@
 				<li ng-repeat="color in game.preview track by $index" class="preview bubble" style="background-color:{{color}}"></li>
 			</ul>
 			<div id="scoreText">Your score: <strong>{{game.score}}</strong></div>
+			<div ng-if="game.message" class="message">{{game.message}}</div> 
 <!-- 			<p id="text">
 				Click on a bubble to pick it up. Click on a box to move it there but be aware 
 				your bubble can't move along diagonals and needs a free path to reach it's target.
@@ -30,7 +31,7 @@
 		<main>
 			<ul id="grid">
 				<li ng-repeat="box in game.boxes track by $index" class="box" id="{{$index}}" ng-click="!box && (game.activeBubble && game.move($index))">
-					<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)"></div>
+					<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble==$index)}" style="background-color:{{box}}" ng-click="game.select($index)" id="bubble{{$index}}"></div>
 				</li>
 			</ul>
 		</main>
@@ -56,6 +57,7 @@
   <script type="text/javascript" src="./js/vendor/sinon-1.16.1.js"></script>
   <script>mocha.setup('bdd')</script>
   
+	<script type="text/javascript" src="./js/vendor/jquery-2.1.4.js"></script>
 	<script type="text/javascript" src="./js/vendor/firebase-2.2.2.js"></script>
 	<script type="text/javascript" src="./js/vendor/angular.js"></script>
 	<script type="text/javascript" src="./js/vendor/angularfire.js"></script>

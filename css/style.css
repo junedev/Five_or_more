@@ -77,19 +77,24 @@ aside {
 }
 
 .bubble{
+	z-index: 1000;
 	width:43px;
 	height: 43px;
 	border-radius: 50%;
 	outline: none;
 	border: 0px;
 	margin: 2px;
+	position: absolute;
+	top: 1px;
+	left: 1px;
 }
 
 .selected {
 	border-radius:50%;
 }
 
-.preview {
+.preview.bubble {
+	position: static;
 	display: inline-block;
 }
 
@@ -115,5 +120,3 @@ p {
 #text {
 	font-size: 14px;
 }
-
-
