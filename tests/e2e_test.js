@@ -28,7 +28,7 @@ describe("Game setup and simple actions:", function() {
 
   describe("Moving a bubble", function(){
 
-    var countBefore, boxId;
+    var countBefore, boxId, color;
     var bubble = element.all(by.css(".bubble")).first();
 
     beforeEach(function() {
@@ -38,28 +38,30 @@ describe("Game setup and simple actions:", function() {
         countBefore = result;
       });
 
-      bubble.click();
-      emptyBoxes.count().then(function(result){
-        emptyBoxes.get(rand(result)).getId().then(function(id){
-          boxId = id.ELEMENT;
-        });
+      bubble.getCssValue("background-color").then(function(result){
+        color = result;
       });
 
-      // browser.driver.wait(function(){ if(countBefore && boxId) return true; }, 10000);
+      bubble.click();
+      emptyBoxes.count().then(function(result){
+        emptyBoxes.get(rand(result)).getAttribute("id").then(function(id){
+          boxId = parseInt(id);
+        });
+      });
 
     });
 
     it("changes the place of the bubble", function(){
       var box = element.all(by.css(".box")).get(boxId);
       box.click();
-      browser.driver.wait(protractor.until.elementLocated(By.xpath("//li[contains(@id, '" + boxId + "') and count(*)=1]")), 10000);
-      expect(box.all(by.css(".bubble")).count()).to.eventually.equal(1);
+      browser.driver.wait(protractor.until.elementLocated(By.id("bubble"+boxId)), 10000);
+      expect(element(by.id("bubble"+boxId)).getCssValue("background-color")).to.eventually.equal(color);
     });
 
     it("adds 3 bubbles after the movement", function(){
       var box = element.all(by.css(".box")).get(boxId);
       box.click();
-      browser.driver.wait(protractor.until.elementLocated(By.xpath("//li[contains(@id, '" + boxId + "') and count(*)=1]")), 10000);
+      browser.driver.wait(protractor.until.elementLocated(By.id("bubble"+boxId)), 10000);
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(countBefore+3);
     });
   });
@@ -78,11 +80,14 @@ describe("Game play until end of game:", function() {
 
     xit("has 81 bubbles", function(){
       var bubble = element.all(by.css(".bubble")).first();
+      bubble.click();
+      var emptyBox = element.all(by.css(".reachable")).first();
 
-      bubble.click().then(function(){
-        var emptyBox = element.all(by.css(".reachable")).first();
+      emptyBox.getAttribute("id").then(function(boxId){
         emptyBox.click();
+        browser.driver.wait(protractor.until.elementLocated(By.id("bubble"+boxId)), 10000);
       });
+
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(81);
     });
   });
