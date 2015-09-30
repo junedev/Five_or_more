@@ -17,7 +17,7 @@
     $scope.$watch(function(){
       if(Game.stopGame) {
         ngDialog.open({
-          template: '<p>Template test</p>',
+          template: "<p class='dialog'>Template test</p>",
           plain: true
         });
       }
@@ -28,7 +28,13 @@
       self.activeBubble = index;
     };
 
+    self.boxReachable = function(targetId){
+      if(self.activeBubble === null) return false;
+      return Game.pathPossible(self.activeBubble, targetId);
+    };
+
     self.move = function(index){
+      if(self.activeBubble === null ) return false;
       if(Game.fillPath(self.activeBubble, index)){
         self.activeBubble = null;
         self.message = "";
@@ -70,11 +76,6 @@
         $scope.$apply();
         self.score += Game.getScore(targetPosition);
       });
-    };
-
-    self.boxReachable = function(targetId){
-      if(self.activeBubble === null) return false;
-      return Game.pathPossible(self.activeBubble, targetId);
     };
   }
 })();

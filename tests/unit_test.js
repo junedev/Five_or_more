@@ -36,14 +36,11 @@ describe("Game Controller", function() {
 
   describe("Bubble", function(){
 
-    var i, bubble, emptyBox;
+    var i, bubble;
     beforeEach(function(){
       bubble = null;
-      emptyBox = null;
       for(i=0; i<gameCtrl.boxes.length; i++){
-        if(!emptyBox && !gameCtrl.boxes[i]) emptyBox = i;
-        if(gameCtrl.boxes[i]) bubble = i;
-        if(bubble && emptyBox) break;
+        if(gameCtrl.boxes[i]){ bubble = i; break; }
       }
     });
 
@@ -55,25 +52,15 @@ describe("Game Controller", function() {
 
     it("can change position", function(){
       var color = gameCtrl.boxes[bubble];
-      var targetPosition = emptyBox;
       gameCtrl.select(bubble);
+      for(i=0; i<gameCtrl.boxes.length; i++){
+        if(gameCtrl.boxReachable(i)){ var targetPosition = i; break; }
+      }
       gameCtrl.move(targetPosition);
       expect(gameCtrl.boxes[targetPosition]).to.equal(color);
     });
 
   });
-
-  // describe("End of game", function(){
-
-  //   beforeEach(function(){
-
-  //   })
-
-  //   it("stops the game when the board is full", function(){
-
-  //   });
-
-  // });
 
 });
 
@@ -159,9 +146,7 @@ describe("Game Service", function(){
       bubbles.forEach(function(index){
         gameObj.boxes[index] = color;
       });
-      if(gameObj.fillPath(1,9)) gameObj.moveBubble(1,9);
-      expect(gameObj.boxes[9]).to.not.exist;
-      expect(gameObj.boxes[1]).to.equal(color);
+      expect(gameObj.fillPath(1,9)).to.be.false;
     });
 
     it("is the shortest path possible", function(){

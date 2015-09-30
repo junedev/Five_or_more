@@ -84,6 +84,10 @@ aside {
 	background-color: #DBE9EE;
 }
 
+.reachable, .bubble {
+	cursor: pointer;
+}
+
 .bubble, .previewBubble{
 	z-index: 1000;
 	width:43px;

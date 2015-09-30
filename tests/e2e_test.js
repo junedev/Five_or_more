@@ -3,7 +3,7 @@ var chaiAsPromised = require("../js/vendor/chai-as-promised.js");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
-describe("Simple Game Play", function() {
+describe("Game setup and simple actions:", function() {
   before(function() {
     browser.get('http://localhost:8000/home.html');
   });
@@ -28,41 +28,64 @@ describe("Simple Game Play", function() {
 
   describe("Moving a bubble", function(){
 
-    var countBefore;
-    var boxId;
+    var countBefore, boxId;
+    var bubble = element.all(by.css(".bubble")).first();
 
     beforeEach(function() {
+      var emptyBoxes = element.all(by.css(".reachable"));
+
       element.all(by.css(".bubble")).count().then(function(result){
         countBefore = result;
       });
 
-      var emptyBoxes = element.all(by.xpath("//li[contains(@class, 'box') and count(*)=0]"));
+      bubble.click();
       emptyBoxes.count().then(function(result){
         emptyBoxes.get(rand(result)).getId().then(function(id){
           boxId = id.ELEMENT;
         });
       });
+
+      // browser.driver.wait(function(){ if(countBefore && boxId) return true; }, 10000);
+
     });
 
     it("changes the place of the bubble", function(){
-      var bubble = element.all(by.css(".bubble")).first();
       var box = element.all(by.css(".box")).get(boxId);
-      bubble.click();
       box.click();
       browser.driver.wait(protractor.until.elementLocated(By.xpath("//li[contains(@id, '" + boxId + "') and count(*)=1]")), 10000);
       expect(box.all(by.css(".bubble")).count()).to.eventually.equal(1);
     });
 
     it("adds 3 bubbles after the movement", function(){
-      var bubble = element.all(by.css(".bubble")).last();
       var box = element.all(by.css(".box")).get(boxId);
-      bubble.click();
       box.click();
       browser.driver.wait(protractor.until.elementLocated(By.xpath("//li[contains(@id, '" + boxId + "') and count(*)=1]")), 10000);
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(countBefore+3);
     });
   });
 
+});
+
+describe("Game play until end of game:", function() {
+
+  var countArray = Array.apply(null, {length: 4}).map(Number.call, Number);
+
+  before(function() {
+    browser.get('http://localhost:8000/home.html');
+  });
+
+  describe("Full board", function(){
+
+    xit("has 81 bubbles", function(){
+      var bubble = element.all(by.css(".bubble")).first();
+
+      bubble.click().then(function(){
+        var emptyBox = element.all(by.css(".reachable")).first();
+        emptyBox.click();
+      });
+      expect(element.all(by.css(".bubble")).count()).to.eventually.equal(81);
+    });
+  });
 });
 
 function rand(max){

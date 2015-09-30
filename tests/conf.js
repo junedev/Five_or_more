@@ -5,6 +5,10 @@ exports.config = {
     slow:3000,
     enableTimeouts: false
   },
+  capabilities: {
+    browserName: 'chrome',
+    count: 4
+  },
   seleniumAddress: 'http://localhost:4444/wd/hub',
   specs: ['e2e_test.js']
 };
