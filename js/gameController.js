@@ -4,29 +4,38 @@
   angular.module("fiveApp")
   .controller("GameController",GameController);
 
-  GameController.$inject = ["Game", "$scope", "ngDialog"];
+  GameController.$inject = ["Game", "Score", "$scope", "$window"];
 
-  function GameController(Game,$scope, ngDialog){
+  function GameController(Game, Score, $scope, $window){
     var self = this;
+    self.scores = Score.all;
     self.score = 0;
     self.activeBubble = null;
     self.boxes = Game.boxes;
     self.preview = Game.preview;
     self.message = "";
-
+    self.stopGame = Game.stopGame;
+    self.newScore = { score: self.score, name: "" };
+    
     $scope.$watch(function(){
-      if(Game.stopGame) {
-        ngDialog.open({
-          template: "<p class='dialog'>Template test</p>",
-          plain: true
-        });
-      }
+      self.stopGame = Game.stopGame;
     });
 
     self.select = function(index){
       self.message = "";
       self.activeBubble = index;
     };
+
+    self.cancel = function(){
+      $window.location.reload();
+    }
+
+    self.submit = function(){
+      Score.create(self.newScore).then(function(){
+        self.newScore = { score: self.score, name: "" };
+        self.cancel();
+      });
+    }
 
     self.boxReachable = function(targetId){
       if(self.activeBubble === null) return false;

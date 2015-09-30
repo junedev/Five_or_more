@@ -2,31 +2,29 @@
 <html ng-app="fiveApp">
 <head>
 	<title>Five or more</title>
-	<link href='https://fonts.googleapis.com/css?family=Lora:400,700' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500,700,900' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" type="text/css" href="./css/animate.css">
-	<link rel="stylesheet" type="text/css" href="./css/ngDialog.css">
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
-
-
 </head>
-<body ng-controller="MainController as main">
+
+<body>
 	<div id="wrapper" ng-controller="GameController as game">
 		<h1>Build lines of <strong>Five or more</strong></h1>
 		<aside>
-			<p id="previewText">Up next:</p>
+			<p id="previewText">Up next</p>
 			<ul>
 				<li ng-repeat="color in game.preview track by $index" class="previewBubble" style="background-color:{{color}}"></li>
 			</ul>
-			<div id="scoreText">Your score: <strong>{{game.score}}</strong></div>
+			<div id="scoreText">Score <strong>{{game.score}}</strong></div>
 			<div ng-if="game.message" class="message">{{game.message}}</div> 
-<!-- 			<p id="text">
+			<p id="text">
 				Click on a bubble to pick it up. Click on a box to move it there but be aware 
 				your bubble can't move along diagonals and needs a free path to reach it's target.
 				Try to connect <strong>Five or more</strong> in a row, column or diagonal to make them vanish 
 				from the board. But be careful, every time you move a bubble and don't connect 
 				<strong> Five or more </strong> your enemy places three new bubbles on the board.
-			</p> -->
-			<button type="button" id="reset" class="btn">New Game</button>
+			</p>
+			<button type="button" id="reset" class="btn" ng-click="game.cancel()">New Game</button>
 		</aside>
 		
 		<main>
@@ -42,36 +40,35 @@
 		<div id="score-list">
 		<p><strong>High scores</strong></p>
 			<ul>
-				<li ng-repeat="score in main.scores">{{score.name}}: {{score.score}}</li>
+				<li ng-repeat="entry in game.scores | orderBy:'-score':reverse | limitTo: 15">
+					{{entry.name}}: {{entry.score}}
+				</li>
 			</ul>
-			<form ng-submit="main.addScore()">
-				<label>Name</label>
-				<input type="text" ng-model="main.newScore.name">
-				<label>Score</label>
-				<input type="text" ng-model="main.newScore.score">
-				<button type="submit" class="btn">Submit</button>
-			</form>
 		</div>
 
+		<div id="overlay" ng-show="game.stopGame"></div>
+		<div id="inputField" ng-show="game.stopGame">
+			<h2>Submit your name and score to the eternal highscore list.</h2>
+			<label>Name</label>
+			<input type="text" ng-model="game.newScore.name">
+			<label>Score</label>
+			<p><strong>{{ game.score }}</strong></p>
+			<button class="btn-inputField pull-left" ng-click="game.cancel()">Cancel</button>
+			<button class="btn-inputField pull-right" ng-click="game.submit()">Submit</button>
+		</div>
 	</div>
 
-  <script type="text/javascript" src="./js/vendor/mocha.js"></script>
-  <script type="text/javascript" src="./js/vendor/chai.js"></script>
-  <script type="text/javascript" src="./js/vendor/sinon-1.16.1.js"></script>
-  <script>mocha.setup('bdd')</script>
-  
 	<script type="text/javascript" src="./js/vendor/jquery-2.1.4.js"></script>
 	<script type="text/javascript" src="./js/vendor/firebase-2.2.2.js"></script>
 	<script type="text/javascript" src="./js/vendor/angular.js"></script>
 	<script type="text/javascript" src="./js/vendor/angularfire.js"></script>
 	<script type="text/javascript" src="./js/vendor/angular-mocks.js"></script>
-	<script type="text/javascript" src="./js/vendor/ngDialog.js"></script>
 
 	<script type="text/javascript" src="./js/app.js"></script>
 	<script type="text/javascript" src="./js/game.js"></script>
 	<script type="text/javascript" src="./js/score.js"></script>
-	<script type="text/javascript" src="./js/mainController.js"></script>
 	<script type="text/javascript" src="./js/gameController.js"></script>
+
 
 </body>
 </html>

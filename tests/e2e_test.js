@@ -70,27 +70,62 @@ describe("Game setup and simple actions:", function() {
 
 describe("Game play until end of game:", function() {
 
-  var countArray = Array.apply(null, {length: 4}).map(Number.call, Number);
-
   before(function() {
     browser.get('http://localhost:8000/home.html');
   });
 
   describe("Full board", function(){
 
-    xit("has 81 bubbles", function(){
-      var bubble = element.all(by.css(".bubble")).first();
-      bubble.click();
-      var emptyBox = element.all(by.css(".reachable")).first();
+    it("has 81 bubbles", function(){
+      var bubbles = element.all(by.css(".bubble"));
+      var boxes = element.all(by.css(".reachable"));
 
-      emptyBox.getAttribute("id").then(function(boxId){
-        emptyBox.click();
-        browser.driver.wait(protractor.until.elementLocated(By.id("bubble"+boxId)), 10000);
-      });
+      // Select a random bubble, move it to the first reachable box
+      // If the bubble can't move, select another one
+      function makeMove(){
+        bubbles.count().then(function(result){
+          bubbles.get(rand(result)).click();
+          boxes.count().then(function(numberOfBoxes){
+            if(numberOfBoxes > 0){
+              var box = boxes.first();
+              box.getAttribute("id").then(function(boxId){
+                box.click();
+                browser.driver.wait(protractor.until.elementLocated(By.id("bubble"+boxId)), 10000);
+              });
+            } else {
+              makeMove();
+            }
+          });
+        });        
+      }
+
+      for (var i = 0; i < 26; i++) {
+        makeMove();
+      }
 
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(81);
     });
+
+    it("shows dialog box", function(){
+      expect(element(by.css("#inputField")).isDisplayed()).to.eventually.be.true;
+    });
+
+    // // Only works if there are less than 15 high scores
+    // xit("adds high score to database", function(){
+    //   element.all(by.repeater("entry in game.scores")).count().then(function(countBefore){
+    //     element(by.css("input")).sendKeys("Stupid_Robot");
+    //     element(by.buttonText("Submit")).click();
+    //     expect(element.all(by.repeater("entry in game.scores")).count()).to.eventually.equal(countBefore+1);
+    //   });
+    // });
+
+    it("resets the game after a button on the input box was clicked", function(){ 
+      element(by.buttonText("Cancel")).click();
+      expect(element.all(by.css(".bubble")).count()).to.eventually.equal(3);
+    });
+
   });
+
 });
 
 function rand(max){

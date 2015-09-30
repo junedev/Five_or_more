@@ -1,27 +1,27 @@
 angular.module("fiveApp")
-.factory("Score",Score)
+.factory("Score", ScoreFactory);
 
-//Score.$inject = ["$firebaseArray","FIREBASE_URL"];
+ScoreFactory.$inject = ["$firebaseArray","FIREBASE_URL"];
 
-function Score($firebaseArray,FIREBASE_URL){
-  // var ref = new Firebase(FIREBASE_URL);
-  // var scores = $firebaseArray(ref.child("scores"));
+function ScoreFactory($firebaseArray,FIREBASE_URL){
+  var ref = new Firebase(FIREBASE_URL);
+  var scores = $firebaseArray(ref.child("scores"));
 
-  // var Score = {};
+  var Score = {};
 
-  // Score.all = scores;
+  Score.all = scores;
 
-  // Score.create = function(score){
-  //   return scores.$add(score);
+  Score.create = function(score){
+    return scores.$add(score);
+  };
+
+  // Score.get = function(id){
+  //   return $firebase(ref.child("scores").child(id)).$asObject();
   // }
 
-  // // Score.get = function(id){
-  // //   return $firebase(ref.child("scores").child(id)).$asObject();
-  // // }
-
-  // Score.delete = function(score){
-  //   return scores.$remove(score);
-  // }
+  Score.delete = function(score){
+    return scores.$remove(score);
+  };
 
   return Score;
 }

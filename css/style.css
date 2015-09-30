@@ -3,8 +3,13 @@
 	padding: 0;
 }
 
-body, button {
-	font-family: 'Lora', serif;
+html, body {
+	height: 100%;
+	width: 100%;
+}
+
+body, button, input {
+	font-family: 'Roboto', sans-serif;
 	font-size: 20px;
 }
 
@@ -12,6 +17,7 @@ body, button {
 	width: 900px;
 	margin: 0 auto;
 	clear: both;
+	position: relative;
 }
 
 #score-list {
@@ -21,23 +27,22 @@ body, button {
 	position: relative;
 }
 
+#score-list p {
+	margin-bottom: 20px;
+}
+
 li {
 	list-style-type: none;
 }
 
-form {
-	margin-top: 100px;
-}
-
-input {
-	width: 100%;
-	height: 30px;
-}
-
 h1 {
-	margin: 40px;
+	padding: 40px;
 	font-weight: 100;
 	text-align: center;
+}
+
+h2 {
+	font-weight: 100;
 }
 
 strong, #score {
@@ -47,13 +52,13 @@ strong, #score {
 main {
 	width:450px;
 	display: inline-block;
-	padding: 0 25px;
+	padding: 0 20px;
 }
 
 aside {
 	text-align: left;
 	position: relative;
-	height: 440px;
+	height: 460px;
 	width: 200px;
 	display: inline-block;
 	float: left;
@@ -112,10 +117,12 @@ aside {
 
 p {
 	display: inline-block;
+	padding-bottom: 10px;
 }
 
 #scoreText {
-	margin-bottom: 15px;
+	margin-bottom: 20px;
+	margin-top: 20px;
 }
 
 .btn {
@@ -131,8 +138,65 @@ p {
 
 #text {
 	font-size: 14px;
+	line-height: 130%;
 }
 
 .message {
 	color: #DD1C1A;
+}
+
+#overlay {
+  position:fixed;
+  top:0;
+  left:0;
+  background:rgba(0,0,0,0.6);
+  z-index: 2000;
+  width:100%;
+  height:100%;
+}
+
+#inputField {
+	position: absolute;
+	width: 500px;
+	margin: 50px 150px;
+	top: 50px;
+	padding: 50px;
+	background-color: white;
+  z-index: 3000;
+}
+
+#inputField p{
+	display: block;
+	margin-bottom: 20px;
+}
+
+.btn-inputField {
+	width: 200px;
+	height: 49px;
+	border: 0px;
+	background-color: #DBE9EE;
+	outline: none;
+	cursor: pointer;
+}
+
+.pull-left {
+	float: left;
+	clear: left;
+}
+
+.pull-right {
+	float: right;
+	clear: right;
+}
+
+label {
+	display: block;
+	padding: 10px 0;
+}
+
+input {
+	margin-bottom: 20px;
+	width: 100%;
+	height: 30px;
+	padding-left: 10px;
 }
