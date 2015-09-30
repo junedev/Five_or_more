@@ -1,4 +1,0 @@
-Improve design
-- start page with info, scroll down to game
-- roboto font
-Update screenshot in readme
