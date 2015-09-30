@@ -1,2 +1,0 @@
-Put screenshot in readme
-Change design to flat
