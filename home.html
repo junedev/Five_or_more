@@ -43,7 +43,7 @@
 		<div id="score-list">
 		<p><strong>High scores</strong></p>
 			<ul>
-				<li ng-repeat="entry in game.scores track by $index | orderBy:'-score':reverse | limitTo: 15" class="animated fadeInUp" >
+				<li ng-repeat="entry in game.scores | orderBy:'-score':reverse | limitTo: 15" class="animated fadeInUp" >
 					{{entry.name}}: {{entry.score}}
 				</li>
 			</ul>
