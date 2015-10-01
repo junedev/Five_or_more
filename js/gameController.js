@@ -28,15 +28,16 @@
     };
 
     self.cancel = function(){
+      // Lazy version, to be improved with initialize function
       $window.location.reload();
-    }
+    };
 
     self.submit = function(){
       Score.create(self.newScore).then(function(){
         self.newScore = { score: self.score, name: "" };
         self.cancel();
       });
-    }
+    };
 
     self.boxReachable = function(targetId){
       if(self.activeBubble === null) return false;

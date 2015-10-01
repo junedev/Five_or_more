@@ -119,7 +119,7 @@
     } else {
       return false;
     }
-  }
+  };
 
   Game.prototype.pathPossible = function(bubbleId, targetId){
     var i,j;

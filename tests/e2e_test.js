@@ -1,4 +1,6 @@
-var chai = require("../js/vendor/chai.js")
+/*jshint expr: true*/
+
+var chai = require("../js/vendor/chai.js");
 var chaiAsPromised = require("../js/vendor/chai-as-promised.js");
 chai.use(chaiAsPromised);
 var expect = chai.expect;

@@ -1,3 +1,5 @@
+/*jshint expr: true*/
+
 var expect = chai.expect;
 
 describe("Game Controller", function() {
@@ -52,9 +54,10 @@ describe("Game Controller", function() {
 
     it("can change position", function(){
       var color = gameCtrl.boxes[bubble];
+      var targetPosition = null;
       gameCtrl.select(bubble);
       for(i=0; i<gameCtrl.boxes.length; i++){
-        if(gameCtrl.boxReachable(i)){ var targetPosition = i; break; }
+        if(gameCtrl.boxReachable(i)){ targetPosition = i; break; }
       }
       gameCtrl.move(targetPosition);
       expect(gameCtrl.boxes[targetPosition]).to.equal(color);
@@ -134,43 +137,43 @@ describe("Game Service", function(){
 
   });
 
-  describe("Bubble path", function(){
-    var color = "#06AED5";
-    beforeEach(function(){
+describe("Bubble path", function(){
+  var color = "#06AED5";
+  beforeEach(function(){
       // remove all bubbles to make sure scoring can be checked under controlled conditions
       gameObj.boxes = new Array(9*9);
     });
 
-    it("cannot enter enclosed area", function(){
-      var bubbles = [0, 1, 10, 18];
-      bubbles.forEach(function(index){
-        gameObj.boxes[index] = color;
-      });
-      expect(gameObj.fillPath(1,9)).to.be.false;
+  it("cannot enter enclosed area", function(){
+    var bubbles = [0, 1, 10, 18];
+    bubbles.forEach(function(index){
+      gameObj.boxes[index] = color;
     });
-
-    it("is the shortest path possible", function(){
-      var bubbles = [9, 10, 11, 12, 18];
-      bubbles.forEach(function(index){
-        gameObj.boxes[index] = color;
-      });
-      expect(gameObj.fillPath(18,0)).to.be.true;
-      expect(gameObj.finalPath).to.deep.equal([18, 19, 20, 21, 22, 13, 4, 3, 2, 1, 0]);
-    });
-
+    expect(gameObj.fillPath(1,9)).to.be.false;
   });
 
-  describe("Ending", function(){
+  it("is the shortest path possible", function(){
+    var bubbles = [9, 10, 11, 12, 18];
+    bubbles.forEach(function(index){
+      gameObj.boxes[index] = color;
+    });
+    expect(gameObj.fillPath(18,0)).to.be.true;
+    expect(gameObj.finalPath).to.deep.equal([18, 19, 20, 21, 22, 13, 4, 3, 2, 1, 0]);
+  });
 
-    it("sets flag for game end when the board is full", function(){
-      for (var i = 0; i < 25; i++) {
-        gameObj.placeBubbles();
-      };
-      expect(gameObj.stopGame).to.be.false;
+});
+
+describe("Ending", function(){
+
+  it("sets flag for game end when the board is full", function(){
+    for (var i = 0; i < 25; i++) {
       gameObj.placeBubbles();
-      expect(gameObj.stopGame).to.be.true;
-    });
-
+    }
+    expect(gameObj.stopGame).to.be.false;
+    gameObj.placeBubbles();
+    expect(gameObj.stopGame).to.be.true;
   });
-  
+
+});
+
 });
