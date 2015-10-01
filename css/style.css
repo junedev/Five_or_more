@@ -27,8 +27,12 @@ body, button, input {
 	position: relative;
 }
 
+#score-list span {
+	padding-bottom: 5px;
+}
+
 #score-list p {
-	margin-bottom: 20px;
+	margin-bottom: 10px;
 }
 
 li {

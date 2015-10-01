@@ -7,16 +7,16 @@
 	<link rel="stylesheet" type="text/css" href="./css/style.css">
 </head>
 
-<body>
+<body ng-cloak>
 	<div id="wrapper" ng-controller="GameController as game">
 		<fieldset ng-disabled='game.stopGame'>
 		<h1>Build lines of <strong>Five or more</strong></h1>
 		<aside>
-			<p id="previewText">Up next</p>
+			<p id="previewText"><strong>Up next</strong></p>
 			<ul>
 				<li ng-repeat="color in game.preview track by $index" class="previewBubble" style="background-color:{{color}}"></li>
 			</ul>
-			<div id="scoreText">Score <strong>{{game.score}}</strong></div>
+			<div id="scoreText"><strong>Score &nbsp; {{game.score}}</strong></div>
 			<p id="text">
 				Click on a bubble to pick it up. Click on a box to move it there but be aware 
 				your bubble can't move along diagonals and needs a free path to reach it's target.
@@ -43,8 +43,8 @@
 		<div id="score-list">
 		<p><strong>High scores</strong></p>
 			<ul>
-				<li ng-repeat="entry in game.scores | orderBy:'-score':reverse | limitTo: 15" class="animated fadeInUp" >
-					{{entry.name}}: {{entry.score}}
+				<li ng-repeat="entry in game.scores | orderBy:'-score':reverse | limitTo: 15">
+					<span class="pull-left animated fadeInUp">{{entry.name}}</span><span class="pull-right animated fadeInUp"> {{entry.score}}</span>
 				</li>
 			</ul>
 		</div>
