@@ -118,6 +118,7 @@ describe("Game play until end of game:", function() {
 
     it("dialog box shows error when name is too long", function(){
       expect(element.all(by.css(".error")).get(1).isDisplayed()).to.eventually.be.false;
+      element(by.css("input")).sendKeys("ThisIsTooLongForANameInThisApp");
       element(by.buttonText("Submit")).click();
       expect(element.all(by.css(".error")).get(1).isDisplayed()).to.eventually.be.true;
     });
