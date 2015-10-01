@@ -110,6 +110,18 @@ describe("Game play until end of game:", function() {
       expect(element(by.css("#inputField")).isDisplayed()).to.eventually.be.true;
     });
 
+    it("dialog box shows error when name is missing", function(){
+      expect(element.all(by.css(".error")).get(0).isDisplayed()).to.eventually.be.false;
+      element(by.buttonText("Submit")).click();
+      expect(element.all(by.css(".error")).get(0).isDisplayed()).to.eventually.be.true;
+    });
+
+    it("dialog box shows error when name is too long", function(){
+      expect(element.all(by.css(".error")).get(1).isDisplayed()).to.eventually.be.false;
+      element(by.buttonText("Submit")).click();
+      expect(element.all(by.css(".error")).get(1).isDisplayed()).to.eventually.be.true;
+    });
+
     // // Only works if there are less than 15 high scores
     // xit("adds high score to database", function(){
     //   element.all(by.repeater("entry in game.scores")).count().then(function(countBefore){
@@ -119,7 +131,7 @@ describe("Game play until end of game:", function() {
     //   });
     // });
 
-    it("resets the game after a button on the input box was clicked", function(){ 
+    it("resets the game after a button in the dialog box was clicked", function(){ 
       element(by.buttonText("Cancel")).click();
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(3);
     });
