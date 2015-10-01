@@ -55,7 +55,6 @@
     if(scoreUpdate === 0) this.placeBubbles();
   };
 
-
   Game.prototype.getScore = function(currentIndex){
     var self = this;
     var color = self.boxes[currentIndex];
