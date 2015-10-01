@@ -9,7 +9,7 @@
   function GameController(Game, Score, $scope, $window){
     var self = this;
     self.scores = Score.all;
-    self.score = 0;
+    self.score = Game.score;
     self.activeBubble = null;
     self.boxes = Game.boxes;
     self.preview = Game.preview;
@@ -18,7 +18,8 @@
     self.newScore = { score: self.score, name: "" };
     
     $scope.$watch(function(){
-      self.stopGame = Game.stopGame;
+      self.stopGame = Game.stopGame; 
+      self.score = Game.score;
     });
 
     self.select = function(index){
@@ -83,7 +84,6 @@
         var targetPosition = Game.finalPath[Game.finalPath.length-1];
         Game.moveBubble(Game.finalPath[0], targetPosition);
         $scope.$apply();
-        self.score += Game.getScore(targetPosition);
       });
     };
   }

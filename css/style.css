@@ -15,9 +15,16 @@ body, button, input {
 
 #wrapper {
 	width: 900px;
-	margin: 0 auto;
+	height: 670px;
 	clear: both;
-	position: relative;
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+
+	margin: auto;
+
 }
 
 #score-list {
@@ -84,9 +91,9 @@ aside {
 	position:relative;
 	background-color: #B6D0DA;
 	-webkit-transition: background-color 0.5s ease;
-  -moz-transition: background-color 0.5s ease;
-  -o-transition: background-color 0.5s ease;
-  transition: background-color 0.5s ease;
+	-moz-transition: background-color 0.5s ease;
+	-o-transition: background-color 0.5s ease;
+	transition: background-color 0.5s ease;
 }
 
 .box:not(.reachable){
@@ -155,13 +162,13 @@ p {
 }
 
 #overlay {
-  position:fixed;
-  top:0;
-  left:0;
-  background:rgba(0,0,0,0.6);
-  z-index: 2000;
-  width:100%;
-  height:100%;
+	position:fixed;
+	top:0;
+	left:0;
+	background:rgba(0,0,0,0.6);
+	z-index: 2000;
+	width:100%;
+	height:100%;
 }
 
 #inputField {
@@ -171,7 +178,7 @@ p {
 	top: 50px;
 	padding: 50px;
 	background-color: white;
-  z-index: 3000;
+	z-index: 3000;
 }
 
 #inputField p{

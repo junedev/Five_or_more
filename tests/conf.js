@@ -5,10 +5,14 @@ exports.config = {
     slow:3000,
     enableTimeouts: false
   },
-  // capabilities: {
-  //   browserName: 'chrome',
-  //   count: 15
-  // },
+  onPrepare: function() {
+    browser.manage().window().setSize(1600, 1000);
+  },
+  multiCapabilities: [{
+    'browserName': 'chrome'
+  }, {
+    'browserName': 'firefox'
+  }],
   seleniumAddress: 'http://localhost:4444/wd/hub',
   specs: ['e2e_test.js']
 };

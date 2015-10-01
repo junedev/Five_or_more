@@ -6,13 +6,15 @@
 
   function Game(){
     var self = this;
+    self.score = 0;
     self.boxes = new Array(9*9);
     self.preview = [];
     self.distanceArray = [];
     self.finalPath = [];
+    self.stopGame = false;
+
     self.fillPreview();
     self.placeBubbles();
-    self.stopGame = false;
   }
 
   Game.prototype.fillPreview = function(){
@@ -28,6 +30,7 @@
       if(boxIndex !== false){
         var color = this.preview.shift();
         this.boxes[boxIndex] = color;
+        this.score += this.getScore(boxIndex);
       }
 
       if(boxIndex === false || getEmptyBoxes(this.boxes).length < 1){
@@ -47,7 +50,9 @@
   Game.prototype.moveBubble = function(fromIndex, toIndex){
     this.boxes[toIndex] = this.boxes[fromIndex];
     this.boxes[fromIndex] = null;
-    this.placeBubbles();
+    var scoreUpdate = this.getScore(toIndex);
+    this.score += scoreUpdate;
+    if(scoreUpdate === 0) this.placeBubbles();
   };
 
 

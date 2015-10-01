@@ -134,6 +134,7 @@ describe("Game play until end of game:", function() {
 
     it("resets the game after a button in the dialog box was clicked", function(){ 
       element(by.buttonText("Cancel")).click();
+      browser.waitForAngular();
       expect(element.all(by.css(".bubble")).count()).to.eventually.equal(3);
     });
 
