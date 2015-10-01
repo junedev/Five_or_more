@@ -5,9 +5,9 @@ WDI 14 LND - Project 1
 
 ### Where to find it
 
-Live on the web: **[Five or more](https://sensationnel-saucisson-1393.herokuapp.com/)**
+Live on the web: **[Five or more](https://color-lines.herokuapp.com/)**
 
-https://sensationnel-saucisson-1393.herokuapp.com/
+https://color-lines.herokuapp.com/
 
 ---
 
