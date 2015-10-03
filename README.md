@@ -1,7 +1,7 @@
 # Five or more/ Colorlines
 <i>1-2 weeks project - started July 10, 2015</i>
 
-![https://color-lines.herokuapp.com/](https://color-lines.herokuapp.com/)
+https://color-lines.herokuapp.com
 
 ![Screenshot](./screenshot.png)
 
