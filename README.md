@@ -26,7 +26,7 @@ The game sounds a bit boring when you read the description but it can be quite f
 After every move (either by the player or via placement of a random bubble) the app has to check whether a line or even two lines of five or more bubbles were created. This is done via recursion starting with the bubble that was just moved to `currentIndex`.
 Lines can be horizontal, vertical or one of the two diagonal directions. Let us walk through the case of looking for a horizonal line. We have to check whether the bubbles above or below `currentIndex` have the same color. `currentNeighbours` contains all neighbouring boxes for the current bubble in a defined order. If there is no box the element is null. So the box below the current bubble can be found in `currentNeighbours[0]`, the one above in `currentNeighbours[1]`. So we start by running `checkForSameColor` for those two and pass the current direction (horizontal, represented by 0) as an argument. In case a bubble with the same color is found we save the index in `storage` and contiue checking in the same direction by calling `checkForSameColor` again. Later we can remove all those bubbles where the storage array is long enough and score the appropriate points.
 
-{% highlight javascript %}
+```javascript
 var storage = [[],[],[],[]];
 for(i=0; i<storage.length; i++){
   checkForSameColor(i,currentIndex,currentNeighbours[i*2]);
@@ -43,12 +43,12 @@ function checkForSameColor(dim, currentIndex, neighbour){
     }
   }
 }
-{% endhighlight %}
+```
 
 ### Pathfinding
 Although it would be quite an easy exercise to just check whether a bubble can reach a certain box, for a proper movement animation a sensible path from start to target box is necessary. I used an implementation of <a href="https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm" target="_blanck">Dijkstra's algorithm</a> for that purpose. The algorithm consists of two parts. First, an array `distanceArray` is recusivly filled with empty neighbouring squares and their distance from the starting point. Since `distanceArray` changes while going through its elements, JavaScript's `forEach` cannot be used for the implementation. That is why good old for loops have to step in, see code example. Once the target is included in the array the process stops. It is now clear that a path to the target is possible. In the second part of the algorithm the shortest possible path between start and end point can be extracted from `distanceArray`. This is done by checking which neighbour has the lowest distance value attached and always moving along those (see function `fillPathArray` in `Game.js` in the repository).
 
-{% highlight javascript %}
+```javascript
 Game.prototype.pathPossible = function(bubbleId, targetId){
   var i,j;
   var self = this;
@@ -81,8 +81,7 @@ Game.prototype.pathPossible = function(bubbleId, targetId){
   }
   return false;
 };
-{% endhighlight %}
-
+```
 
 ## Front-end
 ### JavaScript code
@@ -93,7 +92,7 @@ Additionally, I had to include jQuery. I could not find a good solution for crea
 ### Markup
 In terms of the HTML thanks to Angular the complete game board incl. bubbles is just a couple of (arguably not very pretty) lines. The list items for the squares are created by `ng-repeat`. The styling ensures that the board and the squares always have the correct size. If `box` has a truthy value (a color value) a div is added inside the square for the bubble. The color is then applied via inline styling. The IDs on the boxes and bubbles are not strictly neccessary for the functionality. I added them to ease implementation of the Protractor tests.
 
-{% highlight html %}
+```html
 <ul id="grid">
   <li ng-repeat="box in game.boxes track by $index" class="box" 
   id="{{$index}}" ng-click="!box && game.move($index)" 
@@ -106,7 +105,7 @@ In terms of the HTML thanks to Angular the complete game board incl. bubbles is 
 
   </li>
 </ul>
-{% endhighlight %}
+```
 
 ### Styling
 In the current version only plain CSS is used and the styling is not reponsive. 
@@ -127,7 +126,7 @@ Mocha is combined with <a href="http://chaijs.com/" target="_blanck">Chai</a> as
 ### E2E tests
 As recommended E2E tests are done with <a href="https://angular.github.io/protractor/" target="_blanck">Protractor</a> as test-runner. It is based on Selenium Webdriver but extends the commands with some angular specific ones, e.g. for accessing ng-repeat elements via the repeater text. For the tests itself Mocha and Chai are used again in the same setup as described in the unit tests. Additonally, <a href="https://github.com/domenic/chai-as-promised/" target="_blanck">Chai-as-promised</a> allows to easily adapt the expect statements to work with the promises Protractor returns.
 
-{% highlight javascript %}
+```javascript
 describe("Initial board", function() {
   it("has 81 boxes", function(){
     var e = element.all(by.className("box"));
@@ -145,7 +144,7 @@ describe("Initial board", function() {
     expect(e.getAttribute("class")).to.eventually.equal("bubble animated infinite ng-scope pulse");
   });
 });
-{% endhighlight %}
+```
 
 
 ## Miscellaneous
