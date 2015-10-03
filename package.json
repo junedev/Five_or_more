@@ -1,0 +1,32 @@
+{
+  "name": "five_or_more",
+  "version": "1.0.0",
+  "description": "WDI 14 LND - Project 1",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "karma"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fran-k/Five_or_more.git"
+  },
+  "author": "",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/fran-k/Five_or_more/issues"
+  },
+  "homepage": "https://github.com/fran-k/Five_or_more#readme",
+  "devDependencies": {
+    "chai": "^3.3.0",
+    "karma": "^0.13.10",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-mocha": "^0.2.0",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "mocha": "^2.3.3",
+    "phantomjs": "^1.9.18"
+  }
+}
