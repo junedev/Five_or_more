@@ -6,7 +6,7 @@ exports.config = {
     enableTimeouts: false
   },
   onPrepare: function() {
-    browser.manage().window().setSize(1600, 1000);
+    browser.manage().window().setSize(1000, 700);
   },
   multiCapabilities: [{
     'browserName': 'chrome'

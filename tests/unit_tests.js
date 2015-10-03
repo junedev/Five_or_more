@@ -166,11 +166,15 @@ describe("Bubble path", function(){
 describe("Ending", function(){
 
   it("sets flag for game end when the board is full", function(){
-    for (var i = 0; i < 25; i++) {
-      gameObj.placeBubbles();
+
+    function countBubbles(){
+      return gameObj.boxes.reduce(function(sum,box){ if(box) sum++; return sum;},0);
     }
+
+    while (countBubbles()<78) gameObj.placeBubbles();
     expect(gameObj.stopGame).to.be.false;
-    gameObj.placeBubbles();
+
+    while (countBubbles()<81) gameObj.placeBubbles();
     expect(gameObj.stopGame).to.be.true;
   });
 

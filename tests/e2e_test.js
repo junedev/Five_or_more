@@ -1,7 +1,7 @@
 /*jshint expr: true*/
 
-var chai = require("../js/vendor/chai.js");
-var chaiAsPromised = require("../js/vendor/chai-as-promised.js");
+var chai = require("./vendor/chai.js");
+var chaiAsPromised = require("./vendor/chai-as-promised.js");
 chai.use(chaiAsPromised);
 var expect = chai.expect;
 
