@@ -1,0 +1,11 @@
+{
+    "extends": ["airbnb-base/legacy"],
+    "rules": {
+        "no-undef": "off",
+        "no-plusplus": "off",
+        "consistent-return": "warn",
+        "wrap-iife": "off",
+        "no-use-before-define": "warn",
+        "no-mixed-operators": "warn"
+    }
+}
