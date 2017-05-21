@@ -5,22 +5,22 @@
     .service('Game', Game);
 
   function Game() {
-    var self = this;
-    self.score = 0;
-    self.boxes = new Array(9 * 9);
-    self.preview = [];
-    self.distanceArray = [];
-    self.finalPath = [];
-    self.stopGame = false;
+    this.boxes = new Array(9 * 9);
+    this.score = 0;
+    this.freeBoxesCount = this.boxes.length;
+    this.preview = [];
+    this.distanceArray = [];
+    this.finalPath = [];
+    this.stopGame = false;
 
-    self.fillPreview();
-    self.placeBubbles();
+    this.fillPreview();
+    this.placeBubbles();
   }
 
   Game.prototype.fillPreview = function () {
     var i;
-    for (i = 0; i < 3; i++) {
-      this.preview.push(colorPicker());
+    for (i = 0; i < 3 && this.preview.length < 3; i++) {
+      this.preview.push(getRandomColor());
     }
   };
 
@@ -28,41 +28,42 @@
     var i;
     var boxIndex;
     var color;
-
-    for (i = 0; i < 3; i++) {
+    var maxBubblesToPlace = 3;
+    if (this.freeBoxesCount < 3) {
+      maxBubblesToPlace = this.freeBoxesCount;
+      this.stopGame = true;
+    }
+    for (i = 0; i < maxBubblesToPlace; i++) {
+      this.freeBoxesCount--;
       boxIndex = this.randomEmptyBox();
-
-      if (boxIndex !== false) {
-        color = this.preview.shift();
-        this.boxes[boxIndex] = color;
-        this.score += this.getScore(boxIndex);
-      }
-
-      if (boxIndex === false || getEmptyBoxes(this.boxes).length < 1) {
-        this.stopGame = true;
-        return;
-      }
+      color = this.preview.shift();
+      this.boxes[boxIndex] = color;
+      this.score += this.getScore(boxIndex);
     }
     this.fillPreview();
   };
 
   Game.prototype.randomEmptyBox = function () {
-    var emptyBoxes = getEmptyBoxes(this.boxes);
-    if (emptyBoxes.length < 1) return false;
-    return emptyBoxes[Math.floor(Math.random() * emptyBoxes.length)];
+    var emptyIndexes = [];
+    var i;
+    for (i = 0; i < this.boxes.length; i++) {
+      if (!this.boxes[i]) emptyIndexes.push(i);
+    }
+    if (!emptyIndexes.length) throw new Error('No more empty boxes.');
+    return emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)];
   };
 
   Game.prototype.moveBubble = function (fromIndex, toIndex) {
+    var scoreUpdate;
     this.boxes[toIndex] = this.boxes[fromIndex];
     this.boxes[fromIndex] = null;
-    var scoreUpdate = this.getScore(toIndex);
+    scoreUpdate = this.getScore(toIndex);
     this.score += scoreUpdate;
-    if (scoreUpdate === 0) this.placeBubbles();
+    if (!scoreUpdate) this.placeBubbles();
   };
 
   Game.prototype.getScore = function (currentIndex) {
-    var self = this;
-    var color = self.boxes[currentIndex];
+    var color = this.boxes[currentIndex];
     var score = 0;
     var currentNeighbours = allNeighbours(currentIndex);
     var bubbleCount = 0;
@@ -72,41 +73,36 @@
     // directions to get 5 or more
     var storage = [[], [], [], []];
 
-    // for each of the 4 dimensions check for bubbles of same color as start bubble
-    // check both possible directions (e.g. up and down) for each dimension
-    for (i = 0; i < storage.length; i++) {
-      checkForSameColor(i, currentIndex, currentNeighbours[i * 2]);
-      checkForSameColor(i, currentIndex, currentNeighbours[i * 2 + 1]);
-    }
-
     function checkForSameColor(dim, curIndex, neighbour) {
-      // eslint-disable-next-line eqeqeq
-      if (neighbour !== null && color == self.boxes[neighbour]) {
+      var next;
+      if (neighbour !== null && color === this.boxes[neighbour]) {
         storage[dim].push(neighbour);
         // continue checking in the same direction for more bubbles of the same color
         // if the next candidate is a valid neighbour
-        var next = neighbour + (neighbour - curIndex);
+        next = neighbour + (neighbour - curIndex);
         if (allNeighbours(neighbour).indexOf(next) > -1) {
-          checkForSameColor(dim, neighbour, next);
+          checkForSameColor.call(this, dim, neighbour, next);
         }
       }
     }
+    // for each of the 4 dimensions check for bubbles of same color as start bubble
+    // check both possible directions (e.g. up and down) for each dimension
+    for (i = 0; i < storage.length; i++) {
+      checkForSameColor.call(this, i, currentIndex, currentNeighbours[i * 2]);
+      checkForSameColor.call(this, i, currentIndex, currentNeighbours[i * 2 + 1]);
+    }
 
-    // remove bubbles if more than 5 were found in one or more dimensions
+    // remove bubbles if 4 or more neighbours were found
     for (i = 0; i < storage.length; i++) {
       if (storage[i].length >= 4) {
         bubbleCount += storage[i].length;
         storage[i].push(currentIndex);
-        storage[i].forEach(resetBox);
+        storage[i].forEach(function (index) { this.boxes[index] = null; }, this);
       }
     }
 
-    function resetBox(index) {
-      self.boxes[index] = null;
-    }
-
     // update score by the correct amount depending on number of bubbles removed
-    if (bubbleCount !== 0) {
+    if (bubbleCount) {
       bubbleCount++; // add initial bubble to bubbles count
       score += scoreMap[bubbleCount];
     }
@@ -183,7 +179,7 @@
 
   // ------- INDEPENDENT HELPER METHODS --------
 
-  function colorPicker() {
+  function getRandomColor() {
     var colors = ['#06AED5', '#086788', '#F0C808', '#FFF1D0', '#DD1C1A', '#253031', '#E9724C'];
     return colors[Math.floor(Math.random() * colors.length)];
   }
@@ -200,15 +196,6 @@
     }
     return result;
   })();
-
-  function getEmptyBoxes(array) {
-    var emptyBoxes = [];
-    var i;
-    for (i = 0; i < array.length; i++) {
-      if (!array[i]) emptyBoxes.push(i); // not operator is ok since array elements are never 0
-    }
-    return emptyBoxes;
-  }
 
   // directions hard-coded since for loop wouldn't give the exact order needed
   var DIRECTIONS = [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [1, 1], [-1, 1], [1, -1]];
@@ -227,19 +214,19 @@
         coordinates.push(null);
       }
     });
-    return coordinates.map(function (coord) { return toIndex(coord); });
+    return coordinates.map(function (coord) { return coordToIndex(coord); });
   }
 
   // get index of neighbours of a box excl. the diagonal ones and empty elements
   function neighbours(i) {
-    return allNeighbours(i).splice(0, 4).filter(function (i) { return i !== null; });
+    return allNeighbours(i).splice(0, 4).filter(function (e) { return e !== null; });
   }
 
   function toCoordinate(index) {
     return [parseInt(index / 9, 10), index % 9];
   }
 
-  function toIndex(coordinate) {
+  function coordToIndex(coordinate) {
     if (!coordinate) return null;
     return coordinate[0] * 9 + coordinate[1];
   }
@@ -247,6 +234,6 @@
   function isOnGrid(coord) {
     var x = coord[0];
     var y = coord[1];
-    return ((x >= 0 && y >= 0) && x < 9) && y < 9;
+    return (x >= 0 && y >= 0) && (x < 9 && y < 9);
   }
 })();

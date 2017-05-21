@@ -18,6 +18,7 @@
     self.newScore = { score: 0, name: '' };
 
     $scope.$watch(function update() {
+      self.boxes = Game.boxes;
       self.stopGame = Game.stopGame;
       self.score = Game.score;
     });
@@ -28,7 +29,6 @@
     };
 
     self.cancel = function cancel() {
-      // Lazy version, to be improved with initialize function
       $window.location.reload();
     };
 
@@ -50,9 +50,10 @@
         self.activeBubble = null;
         self.message = '';
         self.animate();
-      } else {
-        self.message = "This bubble can't move there.";
+        return true;
       }
+      self.message = "This bubble can't move there.";
+      return false;
     };
 
     self.animate = function animate() {

@@ -2,6 +2,7 @@
 <html ng-app="fiveApp">
 
 <head>
+	<meta charset="utf-8"/>
 	<title>Five or more</title>
 
 	<link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
@@ -31,67 +32,68 @@
 				<p id="previewText"><strong>Up next</strong></p>
 				<ul>
 					<li ng-repeat="color in game.preview track by $index" class="previewBubble" style="background-color:{{color}}"></li>
-</ul>
+				</ul>
 
-<div id="scoreText"><strong>Score &nbsp; {{game.score}}</strong></div>
+				<div id="scoreText"><strong>Score &nbsp; {{game.score}}</strong></div>
 
-<p id="text">
-	Click on a bubble to pick it up. Click on a box to move it there but be aware your bubble can't move along diagonals and
-	needs a free path to reach it's target. Try to connect <strong>Five or more</strong> in a row, column or diagonal to make
-	them vanish from the board. But be careful, every time you move a bubble and don't connect
-	<strong> Five or more </strong> your enemy places three new bubbles on the board.
-</p>
+				<p id="text">
+					Click on a bubble to pick it up. Click on a box to move it there but be aware your bubble can't move along diagonals and
+					needs a free path to reach it's target. Try to connect <strong>Five or more</strong> in a row, column or diagonal
+					to make them vanish from the board. But be careful, every time you move a bubble and don't connect
+					<strong> Five or more </strong> your enemy places three new bubbles on the board.
+				</p>
 
-<button type="button" id="reset" class="btn" ng-click="game.cancel()">New Game</button>
+				<button type="button" id="reset" class="btn" ng-click="game.cancel()">New Game</button>
 
-</aside>
+			</aside>
 
-<main>
-	<ul id="grid">
-		<li ng-repeat="box in game.boxes track by $index" class="box" id="{{$index}}" ng-click="!box && game.move($index)" ng-class="{reachable: game.boxReachable($index)}">
+			<main>
+				<ul id="grid">
+					<li ng-repeat="box in game.boxes track by $index" class="box" id="{{$index}}" ng-click="!box && game.move($index)" ng-class="{reachable: game.boxReachable($index)}">
 
-			<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble===$index)}" style="background-color:{{box}}" ng-click="game.select($index)" id="bubble{{$index}}"></div>
+						<div ng-if="box" class="bubble animated infinite" ng-class="{pulse: (game.activeBubble===$index)}" style="background-color:{{box}}"
+						 ng-click="game.select($index)" id="bubble{{$index}}"></div>
 
-</li>
-</ul>
-<div ng-if="game.message" class="message">{{game.message}}</div>
-</main>
+					</li>
+				</ul>
+				<div ng-if="game.message" class="message">{{game.message}}</div>
+			</main>
 
-<div id="score-list">
-	<p><strong>High scores</strong></p>
-	<ul>
-		<li ng-repeat="entry in game.scores | orderBy:'-score' | limitTo: 15">
-			<span class="pull-left animated fadeInUp">{{entry.name}}</span><span class="pull-right animated fadeInUp"> {{entry.score}}</span>
-		</li>
-	</ul>
-</div>
+			<div id="score-list">
+				<p><strong>High scores</strong></p>
+				<ul>
+					<li ng-repeat="entry in game.scores | orderBy:'-score' | limitTo: 15">
+						<span class="pull-left animated fadeInUp">{{entry.name}}</span><span class="pull-right animated fadeInUp"> {{entry.score}}</span>
+					</li>
+				</ul>
+			</div>
 
-</fieldset>
+		</fieldset>
 
-<div id="overlay" ng-show="game.stopGame"></div>
-<div id="inputField" ng-show="game.stopGame">
-	<h2>Submit your name and score to the eternal highscore list.</h2>
+		<div id="overlay" ng-show="game.stopGame"></div>
+		<div id="inputField" ng-show="game.stopGame">
+			<h2>Submit your name and score to the eternal highscore list.</h2>
 
-	<form name="form" novalidate>
+			<form name="form" novalidate>
 
-		<label>Name</label>
-		<div ng-show="form.$submitted || form.name.$touched">
-			<div class="error" ng-show="form.name.$error.required"><small>You need to enter a name to submit your score.</small></div>
-			<div class="error" ng-show="form.name.$error.maxlength"><small>The name can't have more than 12 characters.</small></div>
+				<label>Name</label>
+				<div ng-show="form.$submitted || form.name.$touched">
+					<div class="error" ng-show="form.name.$error.required"><small>You need to enter a name to submit your score.</small></div>
+					<div class="error" ng-show="form.name.$error.maxlength"><small>The name can't have more than 12 characters.</small></div>
+				</div>
+				<input type="text" name="name" ng-model="game.newScore.name" required ng-maxlength="12">
+
+				<label>Score</label>
+				<p><strong>{{ game.score }}</strong></p>
+
+				<button type="button" class="btn-inputField pull-left" ng-click="game.cancel()">Cancel</button>
+				<button type="submit" class="btn-inputField pull-right" ng-click="form.$valid && game.submit()">Submit</button>
+
+			</form>
+
 		</div>
-		<input type="text" name="name" ng-model="game.newScore.name" required ng-maxlength="12">
 
-		<label>Score</label>
-		<p><strong>{{ game.score }}</strong></p>
-
-		<button type="button" class="btn-inputField pull-left" ng-click="game.cancel()">Cancel</button>
-		<button type="submit" class="btn-inputField pull-right" ng-click="form.$valid && game.submit()">Submit</button>
-
-	</form>
-
-</div>
-
-</div>
+	</div>
 </body>
 
 </html>
