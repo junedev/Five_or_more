@@ -1,11 +1,12 @@
 {
     "extends": ["airbnb-base/legacy"],
     "rules": {
+        "max-len": [2, 200],
         "no-undef": "off",
         "no-plusplus": "off",
-        "consistent-return": "warn",
+        "consistent-return": "off",
         "wrap-iife": "off",
-        "no-use-before-define": "warn",
-        "no-mixed-operators": "warn"
+        "no-use-before-define": "off",
+        "no-mixed-operators": "off"
     }
 }

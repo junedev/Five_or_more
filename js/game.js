@@ -1,13 +1,27 @@
-(function () {
+(function main() {
   'use strict';
+
+  var scoreMap = (function scoreMap() {
+    var add = 2;
+    var result = [];
+    var i;
+    result[5] = 10;
+    // score formula reverse engineered from original game
+    for (i = 6; i <= 13; i++) {
+      result[i] = add + result[i - 1];
+      add += 4;
+    }
+    return result;
+  })();
+
+  var DIRECTIONS = [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [1, 1], [-1, 1], [1, -1]];
 
   angular.module('fiveApp')
     .service('Game', Game);
 
   function Game() {
-    this.boxes = new Array(9 * 9);
+    this.boxes = new Array(9 * 9).fill(null);
     this.score = 0;
-    this.freeBoxesCount = this.boxes.length;
     this.preview = [];
     this.distanceArray = [];
     this.finalPath = [];
@@ -17,43 +31,43 @@
     this.placeBubbles();
   }
 
-  Game.prototype.fillPreview = function () {
+  Game.prototype.fillPreview = function fillPreview() {
     var i;
     for (i = 0; i < 3 && this.preview.length < 3; i++) {
       this.preview.push(getRandomColor());
     }
   };
 
-  Game.prototype.placeBubbles = function () {
+  Game.prototype.placeBubbles = function placeBubbles() {
     var i;
     var boxIndex;
     var color;
-    var maxBubblesToPlace = 3;
-    if (this.freeBoxesCount < 3) {
-      maxBubblesToPlace = this.freeBoxesCount;
-      this.stopGame = true;
-    }
-    for (i = 0; i < maxBubblesToPlace; i++) {
-      this.freeBoxesCount--;
+    for (i = 0; i < 3; i++) {
       boxIndex = this.randomEmptyBox();
+      if (boxIndex === null) {
+        this.stopGame = true;
+        return;
+      }
       color = this.preview.shift();
       this.boxes[boxIndex] = color;
       this.score += this.getScore(boxIndex);
     }
+    // Check whether here is actually space to move a bubble after placing all 3 bubbles
+    if (this.randomEmptyBox() === null) this.stopGame = true;
     this.fillPreview();
   };
 
-  Game.prototype.randomEmptyBox = function () {
+  Game.prototype.randomEmptyBox = function randomEmptyBox() {
     var emptyIndexes = [];
     var i;
     for (i = 0; i < this.boxes.length; i++) {
-      if (!this.boxes[i]) emptyIndexes.push(i);
+      if (this.boxes[i] === null) emptyIndexes.push(i);
     }
-    if (!emptyIndexes.length) throw new Error('No more empty boxes.');
+    if (!emptyIndexes.length) return null;
     return emptyIndexes[Math.floor(Math.random() * emptyIndexes.length)];
   };
 
-  Game.prototype.moveBubble = function (fromIndex, toIndex) {
+  Game.prototype.moveBubble = function moveBubble(fromIndex, toIndex) {
     var scoreUpdate;
     this.boxes[toIndex] = this.boxes[fromIndex];
     this.boxes[fromIndex] = null;
@@ -62,7 +76,7 @@
     if (!scoreUpdate) this.placeBubbles();
   };
 
-  Game.prototype.getScore = function (currentIndex) {
+  Game.prototype.getScore = function getScore(currentIndex) {
     var color = this.boxes[currentIndex];
     var score = 0;
     var currentNeighbours = allNeighbours(currentIndex);
@@ -97,7 +111,7 @@
       if (storage[i].length >= 4) {
         bubbleCount += storage[i].length;
         storage[i].push(currentIndex);
-        storage[i].forEach(function (index) { this.boxes[index] = null; }, this);
+        storage[i].forEach(function setNull(index) { this.boxes[index] = null; }, this);
       }
     }
 
@@ -110,7 +124,7 @@
     return score;
   };
 
-  Game.prototype.fillPath = function (bubbleId, targetId) {
+  Game.prototype.fillPath = function fillPath(bubbleId, targetId) {
     this.finalPath = [];
     if (this.pathPossible(bubbleId, targetId)) {
       this.fillPathArray(targetId);
@@ -122,9 +136,12 @@
     return false;
   };
 
-  Game.prototype.pathPossible = function (bubbleId, targetId) {
+  Game.prototype.pathPossible = function pathPossible(bubbleId, targetId) {
     var i;
     var j;
+    var addToDistanceArray;
+    var currentNeighbours;
+    var currentDistance;
     var self = this;
     self.distanceArray = [[bubbleId, 0]];
     function checkNeighbourDistances(neighbour) {
@@ -137,9 +154,9 @@
     // Path-finding using Dijkstra's algorithm (see https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm)
     // Has to be done with for-loops as forEach can't work on arrays that change size
     for (i = 0; i < self.distanceArray.length; i++) {
-      var currentNeighbours = neighbours(self.distanceArray[i][0]);
-      var addToDistanceArray = [];
-      var currentDistance = self.distanceArray[i][1] + 1;
+      currentNeighbours = neighbours(self.distanceArray[i][0]);
+      addToDistanceArray = [];
+      currentDistance = self.distanceArray[i][1] + 1;
 
       currentNeighbours.forEach(checkNeighbourDistances);
 
@@ -156,7 +173,7 @@
   // Start from targetId and go through distanceArray and find the best path by
   // always going to the neighbour that is closest to the bubble
   // stop if you reach the element with length 0 (bubble position)
-  Game.prototype.fillPathArray = function (currentId) {
+  Game.prototype.fillPathArray = function fillPathArray(currentId) {
     var currentNeighbours = neighbours(currentId);
     var distance = 1000;
     var closestNeighbour;
@@ -184,29 +201,13 @@
     return colors[Math.floor(Math.random() * colors.length)];
   }
 
-  var scoreMap = (function () {
-    var add = 2;
-    var result = [];
-    var i;
-    result[5] = 10;
-    // score formula reverse engineered from original game
-    for (i = 6; i <= 13; i++) {
-      result[i] = add + result[i - 1];
-      add += 4;
-    }
-    return result;
-  })();
-
-  // directions hard-coded since for loop wouldn't give the exact order needed
-  var DIRECTIONS = [[0, -1], [0, 1], [-1, 0], [1, 0], [-1, -1], [1, 1], [-1, 1], [1, -1]];
-
   // get index of neighbours of a box incl. the diagonal ones
   // fixed order of direction, includes null if no neighbour exists
   function allNeighbours(i) {
     var x = toCoordinate(i)[0];
     var y = toCoordinate(i)[1];
     var coordinates = [];
-    DIRECTIONS.forEach(function (direction) {
+    DIRECTIONS.forEach(function onGrid(direction) {
       var newCoord = [x + direction[0], y + direction[1]];
       if (isOnGrid(newCoord)) {
         coordinates.push(newCoord);
@@ -214,12 +215,12 @@
         coordinates.push(null);
       }
     });
-    return coordinates.map(function (coord) { return coordToIndex(coord); });
+    return coordinates.map(function toIndex(coord) { return coordToIndex(coord); });
   }
 
   // get index of neighbours of a box excl. the diagonal ones and empty elements
   function neighbours(i) {
-    return allNeighbours(i).splice(0, 4).filter(function (e) { return e !== null; });
+    return allNeighbours(i).splice(0, 4).filter(function notNull(e) { return e !== null; });
   }
 
   function toCoordinate(index) {
