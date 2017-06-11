@@ -57,7 +57,9 @@
     };
 
     self.animate = function animate() {
-      var bubble = angular.element('#bubble' + Game.finalPath[0]);
+      var startPosition = Game.finalPath[0];
+      var targetPosition = Game.finalPath[Game.finalPath.length - 1];
+      var bubble = angular.element('#bubble' + startPosition);
       var boxSize = 51;
       var currentId;
       var nextId;
@@ -89,8 +91,12 @@
       }
 
       bubble.promise().done(function doMove() {
-        var targetPosition = Game.finalPath[Game.finalPath.length - 1];
-        Game.moveBubble(Game.finalPath[0], targetPosition);
+        Game.moveBubble(startPosition, targetPosition);
+
+        // fix for weird bug with animation not being completed correctly
+        bubble.css('top', '0px');
+        bubble.css('left', '0px');
+
         $scope.$apply();
       });
     };

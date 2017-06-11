@@ -71,6 +71,7 @@
     var scoreUpdate;
     this.boxes[toIndex] = this.boxes[fromIndex];
     this.boxes[fromIndex] = null;
+    console.log(this.boxes);
     scoreUpdate = this.getScore(toIndex);
     this.score += scoreUpdate;
     if (!scoreUpdate) this.placeBubbles();
